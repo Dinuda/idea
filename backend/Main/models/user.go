@@ -5,8 +5,6 @@ package models
 type Entrepreneur struct{
 	Firstname string
 	Lastname string
-	Gender string
-	Email string
 	PhoneNo int
 	Occupation string
 	DateofBirth dateofBirth
