@@ -6,4 +6,5 @@ type User struct {
 	Lastname string
 	Email string
 	Description string
+	DoB string
 }
