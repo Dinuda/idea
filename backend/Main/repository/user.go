@@ -13,7 +13,7 @@ import(
 //DB DB connection
 var DB *sql.DB
 
-//func cognito(tokens)
+//func cognito(tokens)																																``
 
 //Connect is used to connect to the db
 func Connect(path string)(*sql.DB, error){
