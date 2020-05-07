@@ -1,16 +1,19 @@
 package service
 
 import (
-	"fmt"
-	"net/http"
+	"log"
 
-	"github.com/gorilla/mux"
+	"../models"
+	"../repository"
 )
-//StartServer starts the rest api
-func StartServer(addr string, port int)error{
-	r := mux.NewRouter()
-	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request){
-		fmt.Fprintf(w, "Hello world")
-	})
-	return nil 
+
+//AddEntrepreneur adds a new entrepreneur
+func AddEntrepreneur(User models.Entrepreneur)error{
+	log.Println("Adding an Entrepreneur")
+	rowsAffected, err := repository.AddEntrepreneur(User)
+	if err != nil && rowsAffected < 1 {
+		log.Println("ERR: adding new entrepreneur failed")
+		return err
+	}
+	return nil
 }
