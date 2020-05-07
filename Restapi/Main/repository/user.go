@@ -6,11 +6,14 @@ import(
 
 	//Driver to intrigate with MySql
 	_ "github.com/go-sql-driver/mysql"
+	cognito "github.com/aws/aws-sdk-go/service/cognitoidentity"
 
 	"../models"
 )
 //DB DB connection
 var DB *sql.DB
+
+func cognito(tokens)
 
 //Connect is used to connect to the db
 func Connect(path string)(*sql.DB, error){

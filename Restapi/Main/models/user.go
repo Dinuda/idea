@@ -5,7 +5,9 @@ package models
 type Entrepreneur struct{
 	Firstname string
 	Lastname string
+	Gender string
 	Email string
+	PhoneNo int
 	Occupation string
 	DateofBirth dateofBirth
 	Description string
@@ -24,12 +26,12 @@ type Investor struct{
 	Lastname string
 	Email string
 	Occupation string
+	Gender string
+	PhoneNo int
 	DateofBirth dateofBirth
 	Description string
 	Company string
 }
-
-
 
 type dateofBirth struct{
 	Date int
