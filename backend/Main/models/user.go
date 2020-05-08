@@ -35,16 +35,25 @@ type Investor struct{
 	DateofBirth dateofBirth
 	Description string
 	Company string
-	Ideas []idea
+	Ideas []int
 }
 
-type idea struct{
+//Idea new idea
+type Idea struct{
 	ID int
-	InvestorID int
 	Name string
 	Description string
-	TeamNo int
+	Team int // Team id is used to get the info
 	Category string //Agriculture, IT, 
+}
+
+//Team is used to make a team
+type Team struct{
+	ID int
+	InvestorIDs []int //can have multiple investors in one idea
+	LookingRoles []string //Remaining role to be found
+	AppliedStudents []Student //Students who are applied
+	CurrentStudents []Student //Students currently working
 }
 
 type dateofBirth struct{
