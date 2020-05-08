@@ -7,12 +7,12 @@ import (
 	"../repository"
 )
 
-//AddEntrepreneur adds a new entrepreneur
-func AddEntrepreneur(User models.Entrepreneur)error{
-	log.Println("Adding an Entrepreneur")
-	rowsAffected, err := repository.AddEntrepreneur(User)
+//AddInvestor adds a new Investor
+func AddInvestor(User models.Investor)error{
+	log.Println("Adding an Investor")
+	rowsAffected, err := repository.AddInvestor(User)
 	if err != nil && rowsAffected < 1 {
-		log.Println("ERR: adding new entrepreneur failed")
+		log.Println("ERR: adding new Investor failed")
 		return err
 	}
 	return nil

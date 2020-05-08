@@ -6,22 +6,14 @@ type Student struct{
 	Firstname string
 	Lastname string
 	PhoneNo int
-	StudentType string
 	Address string
-	Linkedin string
-	Website string
-	DateofBirth dateofBirth
+	Email string
+	DateofBirth date
 	Description string
-	Qualifications qualifications
-}
-
-type qualifications struct{
-	StudentType string // University, Bachelor
 	Role string
 	University string
 	CV string
 }
-
 
 //Investor new investor
 type Investor struct{
@@ -32,7 +24,8 @@ type Investor struct{
 	Occupation string
 	Gender string
 	PhoneNo int
-	DateofBirth dateofBirth
+	DateofBirth date
+	Linkedin string
 	Description string
 	Company string
 	Ideas []int
@@ -40,10 +33,12 @@ type Investor struct{
 
 //Idea new idea
 type Idea struct{
-	ID int
-	Name string
+	ID int 
+	Title string
 	Description string
-	Team int // Team id is used to get the info
+	CreatedDay date
+	ClosedDay date
+	TeamID  int // Team id is used to get the info
 	Category string //Agriculture, IT, 
 }
 
@@ -56,7 +51,7 @@ type Team struct{
 	CurrentStudents []Student //Students currently working
 }
 
-type dateofBirth struct{
+type date struct{
 	Date int
 	Month int
 	Year int 

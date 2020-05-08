@@ -22,19 +22,19 @@ func StartServer()error{
 		fmt.Fprintf(w, "hello World ")
 	})
 
-	//add a new entrepreneur
-	r.HandleFunc("/addEntrepreneur", func(w http.ResponseWriter, r *http.Request){
-		var User models.Entrepreneur
+	//add a new Investor
+	r.HandleFunc("/addInvestor", func(w http.ResponseWriter, r *http.Request){
+		var User models.Investor
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			log.Println("ERR: Reading /addEntrepreneur body" + err.Error())
+			log.Println("ERR: Reading /addInvestor body" + err.Error())
 		}
 
 		err = json.Unmarshal(body, &User)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			log.Println("ERR: Unmarshal/addEntrepreneur" + err.Error())
+			log.Println("ERR: Unmarshal/addInvestor" + err.Error())
 		}
 
 	})

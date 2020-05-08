@@ -28,8 +28,8 @@ func Prepare()error{
 	return nil
 }
 
-//AddEntrepreneur adds a new entrepreneur
-func AddEntrepreneur(User models.Entrepreneur)(int64, error){
-	log.Println("Adding a new Entrepreneur")
+//AddInvestor adds a new Investor
+func AddInvestor(User models.Investor)(int64, error){
+	log.Println("Adding a new Investor hello")
 	return 0, nil
 }
