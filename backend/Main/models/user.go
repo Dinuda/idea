@@ -40,11 +40,16 @@ type Investor struct{
 
 type idea struct{
 	ID int
-	InvestorID int
 	Name string
 	Description string
-	TeamNo int
+	Team team
 	Category string //Agriculture, IT, 
+}
+
+type team struct{
+	InvestorIDs []int
+	LookingRoles []string
+	CurrentStudents []Student
 }
 
 type dateofBirth struct{
