@@ -31,7 +31,7 @@ type Investor struct{
 	Ideas []int
 }
 
-//Idea new idea
+//Idea new host of idea
 type Idea struct{
 	ID int 
 	Title string
@@ -47,8 +47,8 @@ type Team struct{
 	ID int
 	InvestorIDs []int //can have multiple investors in one idea
 	LookingRoles []string //Remaining role to be found
-	AppliedStudents []Student //Students who are applied
-	CurrentStudents []Student //Students currently working
+	AppliedStudents []int //Students who are applied
+	CurrentStudents []int //Students currently working
 }
 
 type date struct{
