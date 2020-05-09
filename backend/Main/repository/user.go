@@ -25,7 +25,8 @@ type Config struct{
 var (
 	insertUserStmt,
 	insertInvestorStmt,
-	insertStudentStmt *sql.Stmt
+	insertStudentStmt,
+	selectInvestorStmt *sql.Stmt
 )
 
 //func cognito(tokens)																																``
@@ -82,6 +83,8 @@ func Prepare()error{
 	if err != nil{
 		return err
 	}
+
+	selectInvestorStmt, err = DB.Prepare(`SELECT * FROM users WHERE type=investor INNER JOIN investors ON users.id=investors.user_id`)
 	return nil
 }
 
