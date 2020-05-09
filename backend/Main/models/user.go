@@ -4,7 +4,7 @@ package models
 //User new User
 type User struct{
 	Username string
-	Password []byte
+	Password string
 	Firstname string
 	Lastname string
 	PhoneNo int
