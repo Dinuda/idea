@@ -29,7 +29,7 @@ func StartServer(config Config) error {
 	})
 
 	//add a new User
-	r.HandleFunc("/addUser", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/Singin", func(w http.ResponseWriter, r *http.Request) {
 		log.Println("Adding new User called")
 		var user models.User
 		body, err := ioutil.ReadAll(r.Body)

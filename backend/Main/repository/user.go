@@ -45,7 +45,7 @@ func Connect(config Config)(*sql.DB, error){
 }
 
 //Prepare is used to prepare the sql stmt
-func Prepare()error{
+func Prepare(DB *sql.DB)error{
 	var err error
 	insertUserStmt, err = DB.Prepare(`INSERT INTO users 
 		(
@@ -103,7 +103,7 @@ func AddUser(user models.User)(int64, error){
 		user.Type,
 	)
 	rowsAffected, _ := result.RowsAffected()
-	return rowsAffected(), err
+	return rowsAffected, err
 }
 
 //AddInvestor adds a new Investor
@@ -124,7 +124,7 @@ func AddStudent(student models.Student)(int64, error){
 		student.Profession,
 		student.University,
 		student.cv,
-		student.TeamRole
+		student.TeamRole,
 	)
 	return 0, nil
 }

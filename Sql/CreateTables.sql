@@ -1,11 +1,17 @@
+SET FOREIGN_KEY_CHECKS=0;
 DROP TABLE IF EXISTS users;
-
 DROP TABLE IF EXISTS investors;
-
 DROP TABLE IF EXISTS students;
+DROP TABLE IF EXISTS professions;
+DROP TABLE IF EXISTS projects;
+DROP TABLE IF EXISTS investorteam;
+DROP TABLE IF EXISTS studentteam;
+DROP TABLE IF EXISTS investors;
+DROP TABLE IF EXISTS students;
+SET FOREIGN_KEY_CHECKS=0;
 
 CREATE TABLE `users` (
-	`id` INT NOT NULL AUTO_INCREMENT,
+	`id` INT NOT NULL AUTO_INCREMENT UNIQUE,
 	`username` varchar(255) NOT NULL,
 	`password` varchar(255) NOT NULL,
 	`firstname` varchar(255) NOT NULL,
@@ -19,16 +25,15 @@ CREATE TABLE `users` (
 );
 
 CREATE TABLE `investors` (
-	`id` INT NOT NULL AUTO_INCREMENT,
+	`id` INT NOT NULL AUTO_INCREMENT UNIQUE,
 	`linkedin` varchar(255) NOT NULL UNIQUE,
-	`company` varchar(255) ,
+	`company` varchar(255),
 	`user_id` INT NOT NULL,
 	PRIMARY KEY (`id`)
 );
 
 CREATE TABLE `students` (
-	`id` INT NOT NULL AUTO_INCREMENT,
-	`team_id` INT NOT NULL,
+	`id` INT NOT NULL AUTO_INCREMENT UNIQUE,
 	`user_id` INT NOT NULL,
 	`profession` INT NOT NULL,
 	`university` TEXT NOT NULL,
@@ -37,14 +42,14 @@ CREATE TABLE `students` (
 	PRIMARY KEY (`id`)
 );
 
-CREATE TABLE `profesions` (
-	`id` INT NOT NULL AUTO_INCREMENT,
+CREATE TABLE `professions` (
+	`id` INT NOT NULL AUTO_INCREMENT UNIQUE,
 	`name` VARCHAR(255) NOT NULL UNIQUE,
 	PRIMARY KEY (`id`)
 );
 
 CREATE TABLE `projects` (
-	`id` INT NOT NULL AUTO_INCREMENT,
+	`id` INT NOT NULL AUTO_INCREMENT UNIQUE,
 	`title` VARCHAR(255) NOT NULL,
 	`description` TEXT NOT NULL,
 	`created_date` DATE NOT NULL,
@@ -55,7 +60,7 @@ CREATE TABLE `projects` (
 );
 
 CREATE TABLE `investorteam` (
-	`id` INT NOT NULL,
+	`id` INT NOT NULL ,
 	`investor_id` INT NOT NULL UNIQUE,
 	PRIMARY KEY (`id`)
 );
@@ -63,8 +68,11 @@ CREATE TABLE `investorteam` (
 CREATE TABLE `studentteam` (
 	`id` INT NOT NULL,
 	`student_id` INT NOT NULL,
+	`title` TEXT,
 	PRIMARY KEY (`id`)
 );
+
+
 
 ALTER TABLE `investors` ADD CONSTRAINT `investors_fk0` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`);
 

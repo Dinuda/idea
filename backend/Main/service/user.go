@@ -3,7 +3,9 @@ package service
 import (
 	"log"
 	"fmt"
+	
 
+	"../pkg"
 	"../models"
 	"../repository"
 )
@@ -31,9 +33,16 @@ func AddUser(user models.User)error{
 
 
 	log.Println("Adding a new User")
+	hasedPass, err := pkg.GenarateHash(user.Password)
+	user.password = hasedPass
+	if err != nil{
+		log.Println("Error hashing the password")
+		return err
+	}
+
 	rowsAffected, err := repository.AddUser(user)
 	if err != nil && rowsAffected < 1 {
-		log.Println("ERR: adding new User failed")
+		log.Println("Error adding new User failed")
 		return err
 	}
 
@@ -51,5 +60,4 @@ func AddUser(user models.User)error{
 
 	
 }
-
 //AddInvestor adds a new Investor

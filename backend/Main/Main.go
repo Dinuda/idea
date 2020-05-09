@@ -31,6 +31,7 @@ func init(){
 		Host: p.MustGet("SERVER_HOST"),
 		Port: p.MustGet("SERVER_PORT"),
 	}
+	//repository.Commit = p.MustGet("DB_COMMIT")
 	
 }
 
