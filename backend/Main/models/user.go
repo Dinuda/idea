@@ -1,63 +1,71 @@
 package models
 
-//Student  new Student
-type Student struct{
-	ID string
+
+//User new User
+type User struct{
+	Username string
+	Password string
 	Firstname string
 	Lastname string
 	PhoneNo int
-	StudentType string
 	Address string
-	Linkedin string
-	Website string
-	DateofBirth dateofBirth
+	Email string
+	DateofBirth date
 	Description string
-	Qualifications qualifications
+	Type string
+	Investor Investor
+	Student Student
 }
 
-type qualifications struct{
-	StudentType string // University, Bachelor
-	Role string
+//Student  new Student
+type Student struct{
+	ID string
+	//UserID int
+	TeamID int
+	Profession string
 	University string
 	CV string
+	TeamRole string
 }
-
 
 //Investor new investor
 type Investor struct{
 	ID int
-	Firstname string
-	Lastname string
-	Email string
-	Occupation string
-	Gender string
-	PhoneNo int
-	DateofBirth dateofBirth
-	Description string
+	//UserID int
+	Linkedin string
 	Company string
-	Ideas []int
+	Projects []int
 }
 
-//Idea new idea
-type Idea struct{
-	ID int
-	Name string
+//Project new host of project
+type Project struct{
+	ID int 
+	Title string
 	Description string
-	Team int // Team id is used to get the info
+	CreatedDate date
+	ClosedDate date
+	InvestorTeamID int
+	StudentTeamIDs []int // Team id is used to get the info
 	Category string //Agriculture, IT, 
 }
 
-//Team is used to make a team
-type Team struct{
+//StudentTeam is used to make a team by students
+type StudentTeam struct{
 	ID int
-	InvestorIDs []int //can have multiple investors in one idea
-	LookingRoles []string //Remaining role to be found
-	AppliedStudents []Student //Students who are applied
-	CurrentStudents []Student //Students currently working
+	StudenIDs []int //Students currently working
 }
 
-type dateofBirth struct{
-	Date int
+
+//InvestorTeam is used make a team of investor by investors
+type InvestorTeam struct{
+	ID int 
+	InvestorIDs []int
+	StudentTeamIDs []int //can have multiple student teams
+	Project int
+}
+
+type date struct{
+	Date int 
 	Month int
 	Year int 
 }
