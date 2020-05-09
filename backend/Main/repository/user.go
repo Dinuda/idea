@@ -64,16 +64,16 @@ func Prepare()error{
 	if err != nil{
 		return err
 	}
-	insertInvestorStmt, err = DB.Prepare(`INSERT INTO users 
+	insertInvestorStmt, err = DB.Prepare(`INSERT INTO investors 
 		(
 			linkedin, 
 			company
 		) 
-		VALUES(?,?,?,?)`)
+		VALUES(?,?)`)
 	if err != nil{
 		return err
 	}
-	insertStudentStmt, err = DB.Prepare(`INSERT INTO users 
+	insertStudentStmt, err = DB.Prepare(`INSERT INTO students 
 		(
 			profession, 
 			university, 
@@ -85,10 +85,10 @@ func Prepare()error{
 		return err
 	}
 
-	selectInvestorStmt, err = DB.Prepare(`SELECT * FROM users WHERE type=investor INNER JOIN investors ON users.id=investors.user_id`)
-	if err != nil{
-		return err
-	}
+	// selectInvestorStmt, err = DB.Prepare(`SELECT * FROM users WHERE type=investor INNER JOIN investors ON users.id=investors.user_id`)
+	// if err != nil{
+	// 	return err
+	// }
 	selectProfessions, err = DB.Prepare(`SELECT name FROM professions`)
 	return nil
 }
