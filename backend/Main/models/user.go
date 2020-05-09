@@ -23,9 +23,9 @@ type Student struct{
 	//UserID int
 	TeamID int
 	Profession string
-	TeamRole string
 	University string
 	CV string
+	TeamRole string
 }
 
 //Investor new investor

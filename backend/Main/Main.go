@@ -43,6 +43,11 @@ func main(){
 		log.Fatal("Error connecting to the server")
 	}
 
+	err = repository.Prepare()
+	if err != nil{
+		log.Fatal("Error preparing the Stmt ", err.Error())
+	}
+
 	err = controller.StartServer(serverConfig)
 	if err != nil {
 		log.Fatal("Error starting the Server", err.Error())

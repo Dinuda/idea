@@ -44,7 +44,10 @@ func StartServer(config Config) error {
 			log.Println("ERR: Unmarshal/addUser" + err.Error())
 		}
 		//add a new user
-		service.AddUser(user)
+		err = service.AddUser(user)
+		if err != nil{
+			fmt.Sprintf(err)
+		}
 
 	})
 	path := config.Host + ":" + config.Port
