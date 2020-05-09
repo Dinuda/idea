@@ -20,7 +20,7 @@ type User struct{
 //Student  new Student
 type Student struct{
 	ID string
-	//UserID int
+	UserID int
 	TeamID int
 	Profession string
 	University string
@@ -31,7 +31,7 @@ type Student struct{
 //Investor new investor
 type Investor struct{
 	ID int
-	//UserID int
+	UserID int
 	Linkedin string
 	Company string
 	Projects []int

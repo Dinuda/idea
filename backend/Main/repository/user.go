@@ -2,6 +2,7 @@ package repository
 
 import(
 	"log"
+	"fmt"
 	"database/sql"
 
 	//Driver to intrigate with MySql
@@ -26,8 +27,8 @@ var (
 	insertUserStmt,
 	insertInvestorStmt,
 	insertStudentStmt,
-	selectInvestorStmt,
-	selectProfessions *sql.Stmt
+	selectUserStmt,
+	selectProfessionsStmt *sql.Stmt
 )
 
 //func cognito(tokens)																																``
@@ -60,18 +61,20 @@ func Prepare()error{
 			description, 
 			type
 		) 
-		VALUES(?,?,?,?,?,?,?,?,?)`)
+		VALUES(?,?,?,?,?,?,?,?,?)
+		SELECT LAST_INSERT_ID`)
 	if err != nil{
-		return err
+		return fmt.Errorf("Error preparing insertUserStmt, "+ err.Error())
 	}
 	insertInvestorStmt, err = DB.Prepare(`INSERT INTO investors 
 		(
+			user_id
 			linkedin, 
 			company
 		) 
-		VALUES(?,?)`)
+		VALUES(?,?,?)`)
 	if err != nil{
-		return err
+		return fmt.Errorf("Error preparing insertInvestorStmt, "+ err.Error())
 	}
 	insertStudentStmt, err = DB.Prepare(`INSERT INTO students 
 		(
@@ -82,21 +85,25 @@ func Prepare()error{
 		) 
 		VALUES(?,?,?,?)`)
 	if err != nil{
-		return err
+		return fmt.Errorf("Error preparing insertStudentStmt, "+ err.Error())
 	}
 
-	// selectInvestorStmt, err = DB.Prepare(`SELECT * FROM users WHERE type=investor INNER JOIN investors ON users.id=investors.user_id`)
-	// if err != nil{
-	// 	return err
-	// }
-	selectProfessions, err = DB.Prepare(`SELECT name FROM professions`)
+	selectUserStmt, err = DB.Prepare(`SELECT * FROM users WHERE type=investor INNER JOIN investors ON users.id=investors.user_id`)
+	if err != nil{
+		return fmt.Errorf("Error preparing selectUserStmt, "+ err.Error())
+	}
+	selectProfessionsStmt, err = DB.Prepare(`SELECT name FROM professions`)
+	if err != nil{
+		return fmt.Errorf("Error preparing selectProfessionsStmt, "+ err.Error())
+	
+	}
 	return nil
 }
 
 //AddUser adds a new user
-func AddUser(user models.User)(int64, error){
+func AddUser(user models.User)(int, error){
 	log.Println("Adding a new User to the DB")
-	result, err := insertUserStmt.Exec(
+	result, err := insertUserStmt.Query(
 		user.Username,
 		user.Password,
 		user.Firstname,
@@ -107,14 +114,16 @@ func AddUser(user models.User)(int64, error){
 		user.Description,
 		user.Type,
 	)
-	rowsAffected, _ := result.RowsAffected()
-	return rowsAffected, err
+	var UserID int
+	err = result.Scan(&UserID)
+	return UserID, err
 }
 
 //AddInvestor adds a new Investor
 func AddInvestor(investor models.Investor)(int64, error){
 	log.Println("Adding a new Investor User to the DB")
 	result, err := insertInvestorStmt.Exec(
+		investor.UserID,
 		investor.Linkedin,
 		investor.Company,
 	)
