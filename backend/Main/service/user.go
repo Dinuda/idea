@@ -34,7 +34,7 @@ func AddUser(user models.User)error{
 
 	log.Println("Adding a new User")
 	hasedPass, err := pkg.GenarateHash(user.Password)
-	user.password = hasedPass
+	user.Password = hasedPass
 	if err != nil{
 		log.Println("Error hashing the password")
 		return err
@@ -60,4 +60,16 @@ func AddUser(user models.User)error{
 
 	
 }
-//AddInvestor adds a new Investor
+//GetUserType gets the user type investor|student
+func GetUserType(user models.User)(string, error){
+	log.Println("getting user type")
+	return "", nil
+}
+
+//GetProfessionsRoles gets all the Professions roles
+func GetProfessions()(error){
+	log.Println("get Professions roles")
+	
+	return nil
+}
+

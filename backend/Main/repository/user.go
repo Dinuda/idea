@@ -26,7 +26,8 @@ var (
 	insertUserStmt,
 	insertInvestorStmt,
 	insertStudentStmt,
-	selectInvestorStmt *sql.Stmt
+	selectInvestorStmt,
+	selectProfessions *sql.Stmt
 )
 
 //func cognito(tokens)																																``
@@ -45,7 +46,7 @@ func Connect(config Config)(*sql.DB, error){
 }
 
 //Prepare is used to prepare the sql stmt
-func Prepare(DB *sql.DB)error{
+func Prepare()error{
 	var err error
 	insertUserStmt, err = DB.Prepare(`INSERT INTO users 
 		(
@@ -85,6 +86,10 @@ func Prepare(DB *sql.DB)error{
 	}
 
 	selectInvestorStmt, err = DB.Prepare(`SELECT * FROM users WHERE type=investor INNER JOIN investors ON users.id=investors.user_id`)
+	if err != nil{
+		return err
+	}
+	selectProfessions, err = DB.Prepare(`SELECT name FROM professions`)
 	return nil
 }
 
@@ -123,8 +128,20 @@ func AddStudent(student models.Student)(int64, error){
 	result, err := insertStudentStmt.Exec(
 		student.Profession,
 		student.University,
-		student.cv,
+		student.CV,
 		student.TeamRole,
 	)
-	return 0, nil
+	rowsAffected, _ := result.RowsAffected()
+	return rowsAffected, err
 }
+
+//GetProfessions get all the professions from the db
+// func GetProfessions()([]string, error){
+// 	result, err := selectProfessions.Query()
+// 	var professions []string
+// 	for result.Next(){
+// 		var profession string
+// 		result.Scan(&profession)
+// 		professions = professions.addend(profession, professions)
+// 	}
+// }
