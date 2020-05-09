@@ -1,8 +1,10 @@
 package models
 
-//Student  new Student
-type Student struct{
-	ID string
+
+//User new User
+type User struct{
+	Username string
+	Password string
 	Firstname string
 	Lastname string
 	PhoneNo int
@@ -10,7 +12,18 @@ type Student struct{
 	Email string
 	DateofBirth date
 	Description string
-	Role string
+	Type string
+	Investor Investor
+	Student Student
+}
+
+//Student  new Student
+type Student struct{
+	ID string
+	//UserID int
+	TeamID int
+	Profession string
+	TeamRole string
 	University string
 	CV string
 }
@@ -18,41 +31,41 @@ type Student struct{
 //Investor new investor
 type Investor struct{
 	ID int
-	Firstname string
-	Lastname string
-	Email string
-	Occupation string
-	Gender string
-	PhoneNo int
-	DateofBirth date
+	//UserID int
 	Linkedin string
-	Description string
 	Company string
-	Ideas []int
+	Projects []int
 }
 
-//Idea new host of idea
-type Idea struct{
+//Project new host of project
+type Project struct{
 	ID int 
 	Title string
 	Description string
-	CreatedDay date
-	ClosedDay date
-	TeamID  int // Team id is used to get the info
+	CreatedDate date
+	ClosedDate date
+	InvestorTeamID int
+	StudentTeamIDs []int // Team id is used to get the info
 	Category string //Agriculture, IT, 
 }
 
-//Team is used to make a team
-type Team struct{
+//StudentTeam is used to make a team by students
+type StudentTeam struct{
 	ID int
-	InvestorIDs []int //can have multiple investors in one idea
-	LookingRoles []string //Remaining role to be found
-	AppliedStudents []int //Students who are applied
-	CurrentStudents []int //Students currently working
+	StudenIDs []int //Students currently working
+}
+
+
+//InvestorTeam is used make a team of investor by investors
+type InvestorTeam struct{
+	ID int 
+	InvestorIDs []int
+	StudentTeamIDs []int //can have multiple student teams
+	Project int
 }
 
 type date struct{
-	Date int
+	Date int 
 	Month int
 	Year int 
 }
