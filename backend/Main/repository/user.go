@@ -175,27 +175,32 @@ func GetProfessions() ([]models.Profession, error) {
 	var professions []models.Profession
 	for result.Next() {
 		var profession models.Profession
-		err = result.Scan(&profession)
+		err = result.Scan(&profession.ID, &profession.Name)
 		if err != nil{
 			return []models.Profession{}, err
 		}
 		professions = append(professions, profession)
 	}
+	
 	return professions, err
 }
 
 //GetProjectCategories get all the category from the db
 func GetProjectCategories() ([]models.ProjectCategory, error) {
-	result, err := selectProfessionsStmt.Query()
+	result, err := selectProjectCatagoriesStmt.Query()
 	if err != nil {
 		return []models.ProjectCategory{}, err
 	}
 	var projectCategories []models.ProjectCategory
 	for result.Next() {
 		var projectCategory models.ProjectCategory
-		result.Scan(&projectCategory)
+		err = result.Scan(&projectCategory.ID, &projectCategory.Name)
+		if err != nil{
+			return []models.ProjectCategory{}, err
+		}
 		projectCategories = append(projectCategories, projectCategory)
 	}
+	
 	return projectCategories, err
 }
 

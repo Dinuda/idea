@@ -75,11 +75,9 @@ func StartServer() error {
 	}).Methods("GET")
 
 	//Get all the Categories
-	r.HandleFunc("/getCategories", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/getProjectCategories", func(w http.ResponseWriter, r *http.Request) {
 		log.Println("Getting Categories")
-		var projectCategories []models.ProjectCategory
-		var err error
-		projectCategories, err = service.GetProjectCategories()
+		projectCategories, err := service.GetProjectCategories()
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
