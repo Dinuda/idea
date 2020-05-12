@@ -45,7 +45,7 @@
                                                     <li><a href="elements.html">Element</a></li>
                                                 </ul>
                                             </li>
-                                            <li><a href="contact.html">Contact</a></li>
+                                            <li><a href="/#/register">Sign In</a></li>
                                         </ul>
                                     </nav>
                                 </div>
