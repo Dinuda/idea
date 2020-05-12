@@ -1,54 +1,47 @@
 package repository
 
-import(
-	"log"
-	"fmt"
+import (
 	"database/sql"
-
+	"fmt"
+	"log"
 	//Driver to intrigate with MySql
 	_ "github.com/go-sql-driver/mysql"
-	//cognito "github.com/aws/aws-sdk-go/service/cognitoidentity"
 
 	"../models"
 )
+
 //DB DB connection
 var DB *sql.DB
-//Config to get DB properties
-type Config struct{
-	Username string
-	Password string
-	Protocol string
-	URL string
-	Port string
-	Schema string
-}
+
+//DNS to get DB properties
+var DNS string
 
 var (
 	insertUserStmt,
 	insertInvestorStmt,
 	insertStudentStmt,
-	selectUserStmt,
+	selectInvestorStmt,
+	selectPasswordStmt,
+	selectProjectCatagoriesStmt,
 	selectProfessionsStmt *sql.Stmt
 )
 
-//func cognito(tokens)																																``
-
 //Connect is used to connect to the db
-func Connect(config Config)(*sql.DB, error){
+func Connect() (*sql.DB, error) {
 	log.Println("Connecting to the DB")
-	path := config.Username+":"+config.Password+"@"+config.Protocol+"("+config.URL+":"+config.Port+")/"+config.Schema
-	db, err := sql.Open("mysql", path)
+	db, err := sql.Open("mysql", DNS)
 	err = db.Ping()
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 	log.Println("Connected to the DB")
-	return db, err 
+	return db, err
 }
 
 //Prepare is used to prepare the sql stmt
-func Prepare()error{
+func Prepare() error {
 	var err error
+
 	insertUserStmt, err = DB.Prepare(`INSERT INTO users 
 		(
 			username, 
@@ -61,21 +54,22 @@ func Prepare()error{
 			description, 
 			type
 		) 
-		VALUES(?,?,?,?,?,?,?,?,?)
-		SELECT LAST_INSERT_ID`)
-	if err != nil{
-		return fmt.Errorf("Error preparing insertUserStmt, "+ err.Error())
+		VALUES(?,?,?,?,?,?,?,?,?)`)
+	if err != nil {
+		return fmt.Errorf("Error preparing insertUserStmt, " + err.Error())
 	}
+
 	insertInvestorStmt, err = DB.Prepare(`INSERT INTO investors 
 		(
-			user_id
+			user_id,
 			linkedin, 
 			company
 		) 
 		VALUES(?,?,?)`)
-	if err != nil{
-		return fmt.Errorf("Error preparing insertInvestorStmt, "+ err.Error())
+	if err != nil {
+		return fmt.Errorf("Error preparing insertInvestorStmt, " + err.Error())
 	}
+
 	insertStudentStmt, err = DB.Prepare(`INSERT INTO students 
 		(
 			profession, 
@@ -84,26 +78,37 @@ func Prepare()error{
 			team_role 
 		) 
 		VALUES(?,?,?,?)`)
-	if err != nil{
-		return fmt.Errorf("Error preparing insertStudentStmt, "+ err.Error())
+	if err != nil {
+		return fmt.Errorf("Error preparing insertStudentStmt, " + err.Error())
 	}
 
-	selectUserStmt, err = DB.Prepare(`SELECT * FROM users WHERE type=investor INNER JOIN investors ON users.id=investors.user_id`)
-	if err != nil{
-		return fmt.Errorf("Error preparing selectUserStmt, "+ err.Error())
+	selectInvestorStmt, err = DB.Prepare(`SELECT * FROM users INNER JOIN investors ON users.id=investors.user_id  WHERE users.id=?`)
+	if err != nil {
+		return fmt.Errorf("Error preparing selectUserStmt, " + err.Error())
 	}
-	selectProfessionsStmt, err = DB.Prepare(`SELECT name FROM professions`)
-	if err != nil{
-		return fmt.Errorf("Error preparing selectProfessionsStmt, "+ err.Error())
-	
+
+	selectProfessionsStmt, err = DB.Prepare(`SELECT * FROM professions`)
+	if err != nil {
+		return fmt.Errorf("Error preparing selectProfessionsStmt, " + err.Error())
 	}
+
+	selectProjectCatagoriesStmt, err = DB.Prepare(`SELECT * FROM categories`)
+	if err != nil {
+		return fmt.Errorf("Error preparing selectProjectCategoryStmt, " + err.Error())
+	}
+
+	selectPasswordStmt, err = DB.Prepare(`SELECT password FROM users WHERE username = ?`)
+	if err != nil {
+		return fmt.Errorf("Error preparing the selectPasswordStmt, " + err.Error())
+	}
+
 	return nil
 }
 
 //AddUser adds a new user
-func AddUser(user models.User)(int, error){
+func AddUser(user models.User) (int, error) {
 	log.Println("Adding a new User to the DB")
-	result, err := insertUserStmt.Query(
+	result, err := insertUserStmt.Exec(
 		user.Username,
 		user.Password,
 		user.Firstname,
@@ -114,25 +119,36 @@ func AddUser(user models.User)(int, error){
 		user.Description,
 		user.Type,
 	)
-	var UserID int
-	err = result.Scan(&UserID)
-	return UserID, err
+	if err != nil {
+		return 0, err
+	}
+	UserID, errID := result.LastInsertId()
+	if errID != nil {
+		return 0, errID
+	}
+	return int(UserID), nil
 }
 
 //AddInvestor adds a new Investor
-func AddInvestor(investor models.Investor)(int64, error){
+func AddInvestor(investor models.Investor) (int64, error) {
 	log.Println("Adding a new Investor User to the DB")
 	result, err := insertInvestorStmt.Exec(
 		investor.UserID,
 		investor.Linkedin,
 		investor.Company,
 	)
-	rowsAffected, _ := result.RowsAffected()
-	return rowsAffected, err
+	if err != nil {
+		return 0, err
+	}
+	rowsAffected, errResult := result.RowsAffected()
+	if errResult != nil {
+		return 0, err
+	}
+	return rowsAffected, nil
 }
 
 //AddStudent adds a new Investor
-func AddStudent(student models.Student)(int64, error){
+func AddStudent(student models.Student) (int64, error) {
 	log.Println("Adding a new Student User to the DB")
 	result, err := insertStudentStmt.Exec(
 		student.Profession,
@@ -140,17 +156,52 @@ func AddStudent(student models.Student)(int64, error){
 		student.CV,
 		student.TeamRole,
 	)
-	rowsAffected, _ := result.RowsAffected()
-	return rowsAffected, err
+	if err != nil {
+		return 0, err
+	}
+	rowsAffected, errResult := result.RowsAffected()
+	if errResult != nil {
+		return 0, err
+	}
+	return rowsAffected, nil
 }
 
 //GetProfessions get all the professions from the db
-// func GetProfessions()([]string, error){
-// 	result, err := selectProfessions.Query()
-// 	var professions []string
-// 	for result.Next(){
-// 		var profession string
-// 		result.Scan(&profession)
-// 		professions = professions.addend(profession, professions)
-// 	}
-// }
+func GetProfessions() ([]models.Profession, error) {
+	result, err := selectProfessionsStmt.Query()
+	if err != nil {
+		return []models.Profession{}, err
+	}
+	var professions []models.Profession
+	for result.Next() {
+		var profession models.Profession
+		err = result.Scan(&profession)
+		if err != nil{
+			return []models.Profession{}, err
+		}
+		professions = append(professions, profession)
+	}
+	return professions, err
+}
+
+//GetProjectCategories get all the category from the db
+func GetProjectCategories() ([]models.ProjectCategory, error) {
+	result, err := selectProfessionsStmt.Query()
+	if err != nil {
+		return []models.ProjectCategory{}, err
+	}
+	var projectCategories []models.ProjectCategory
+	for result.Next() {
+		var projectCategory models.ProjectCategory
+		result.Scan(&projectCategory)
+		projectCategories = append(projectCategories, projectCategory)
+	}
+	return projectCategories, err
+}
+
+//GetUserPassword retrieves password for a specific user
+func GetUserPassword(username string) (string, error) {
+	var password string
+	err := selectPasswordStmt.QueryRow(username).Scan(&password)
+	return password, err
+}

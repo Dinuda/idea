@@ -41,7 +41,8 @@ func AddUser(user models.User)error{
 	}
 
 	userID, err := repository.AddUser(user)
-	if err != nil && userID != 0 {
+	log.Println(userID)
+	if err != nil && userID == 0 {
 		log.Println("Error adding new User failed")
 		return err
 	}
@@ -69,9 +70,24 @@ func GetUserType(user models.User)(string, error){
 }
 
 //GetProfessions gets all the Professions roles
-func GetProfessions()(error){
+func GetProfessions()([]models.Profession, error){
 	log.Println("get Professions roles")
-	
-	return nil
+	professions, err := repository.GetProfessions()
+	if err != nil || len(professions) == 0{
+		log.Println("Error retriving professions form the DB, " + err.Error())
+		return []models.Profession{}, err
+	}
+	return professions, nil
+}
+
+//GetProjectCategories gets all the Categories roles
+func GetProjectCategories()([]models.ProjectCategory, error){
+	log.Println("get Professions roles")
+	ProjectCategories, err := repository.GetProjectCategories()
+	if err != nil || ProjectCategories == nil{
+		log.Println("Error retriving Categories form the DB, " + err.Error())
+		return nil, err
+	}
+	return ProjectCategories, nil
 }
 
