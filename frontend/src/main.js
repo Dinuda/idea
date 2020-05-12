@@ -2,6 +2,8 @@ import Vue from 'vue'
 import App from './App.vue'
 import VueRouter from 'vue-router'
 import hero from './components/hero.vue'
+import register from './components/register.vue'
+
 
 ``
 Vue.config.productionTip = false
@@ -12,6 +14,11 @@ const routes = [
     path: '/',
     name: 'hero',
     component: hero,
+  } ,
+  {
+    path: '/register',
+    name: 'register',
+    component: register,
   } ,
 ]
 

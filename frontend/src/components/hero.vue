@@ -11,12 +11,7 @@
                         </div>
                         <div class="hero__caption">
                             <h1 data-animation="fadeInLeft" data-delay=".4s" class="" style="animation-delay: 0.4s;">Business Synergy via <br>Robust Strategies</h1>
-                            <p data-animation="fadeInLeft" data-delay=".6s" class="" style="animation-delay: 0.6s;">Aasrem dfgum dolor sivst amet, consectetur adipisicing elitvde, sed dvo eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad micnim veniam, quis nostrud exercita.</p>
-                            <!-- Hero Btn -->
-                            <a href="#" class="hero-btn" data-animation="fadeInLeft" data-delay=".9s" tabindex="0" style="animation-delay: 0.9s;">
-                                View project
-                                <!-- Arrow SVG icon -->
-                            </a>
+                            <!-- Hero BtGet in touh with the world -->
                         </div>
                     </div>
                 </div>
@@ -42,6 +37,128 @@
             </div>
         </div>
     </div>
+    <div class="wantToWork-area w-padding want">
+            <div class="container">
+                <div class="row align-items-end">
+                    <div class="col-xl-5 col-lg-7 col-md-8">
+                        <div class="wantToWork-caption">
+                            <p>Once you’ve settled on a business</p>
+                            <h2>High Performance Services For Multiple Industries.</h2>
+                        </div>
+                    </div>
+                    <div class="col-xl-7 col-lg-5 col-md-4">
+                       <div class="wantToWork-btn f-right">
+                            <a href="#" class="btn btn-ans">view more</a>
+                       </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="our-services  pt-50 pb-150 want">
+            <div class="container">
+                <div class="row">
+                    <div class=" col-lg-4 col-md-6 col-sm-6">
+                        <div class="single-services text-center mb-30">
+                            <div class="services-ion">
+                                <span class="flaticon-experience"></span>
+                            </div>
+                            <div class="services-cap">
+                                <h5>Strategic Planning</h5>
+                                <p>Learn from the investors to get to know the field</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class=" col-lg-4 col-md-6 col-sm-6">
+                        <div class="single-services text-center mb-30">
+                            <div class="services-ion">
+                                <span class="flaticon-pay"></span>
+                            </div>
+                            <div class="services-cap">
+                                <h5>Trades &amp; stocks</h5>
+                                <p>Be a idea creator or work on one.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class=" col-lg-4 col-md-6 col-sm-6">
+                        <div class="single-services text-center mb-30">
+                            <div class="services-ion">
+                                <span class="flaticon-good"></span>
+                            </div>
+                            <div class="services-cap">
+                                <h5>Audit &amp; Assurance</h5>
+                                <p>Give trust and move forward</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="wantToWork-area w-padding3 want">
+            <div class="container">
+                <div class="row align-items-end">
+                    <div class="col-xl-5 col-lg-7 col-md-8">
+                        <div class="wantToWork-caption">
+                            <h2>All startups need to make their business work</h2>
+                        </div>
+                    </div>
+                    <div class="col-xl-7 col-lg-5 col-md-4">
+                        <div class="wantToWork-btn f-right">
+                            <a href="#" class="btn btn-ans">view more</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="all-starups-area fix">
+            <!-- left Contents -->
+            <div class="starups">
+                <div class="starups-details">
+                    <span>Features That You Will Get</span>
+                    <h3>All startups need to make<br>their business work</h3>
+                    <!-- Details -->
+                    <div class="starups-list">
+                        <ul>
+                            <li>
+                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30px" height="30px">
+                                <path fill-rule="evenodd" fill="rgb(4, 219, 236)" d="M15.000,0.000 C23.284,0.000 30.000,6.716 30.000,15.000 C30.000,23.284 23.284,30.000 15.000,30.000 C6.716,30.000 -0.000,23.284 -0.000,15.000 C-0.000,6.716 6.716,0.000 15.000,0.000 Z"></path>
+                                <text kerning="auto" font-family="themify" fill="rgb(255, 255, 255)" font-size="14px" x="9px" y="22.0320000000002px"></text>
+                                </svg>
+                            </li>
+                            <li>
+                                <p>Having a home based business is a wonderful asset to your life. The problem still stands,</p>
+                            </li>
+                        </ul>
+                        <ul>
+                            <li>
+                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30px" height="30px">
+                                <path fill-rule="evenodd" fill="rgb(4, 219, 236)" d="M15.000,0.000 C23.284,0.000 30.000,6.716 30.000,15.000 C30.000,23.284 23.284,30.000 15.000,30.000 C6.716,30.000 -0.000,23.284 -0.000,15.000 C-0.000,6.716 6.716,0.000 15.000,0.000 Z"></path>
+                                <text kerning="auto" font-family="themify" fill="rgb(255, 255, 255)" font-size="14px" x="9px" y="22.0320000000002px"></text>
+                                </svg>
+                            </li>
+                            <li>
+                                <p>Promotional Advertising Specialty You Ve Waited Long Enough</p>
+                            </li>
+                        </ul>
+                        <ul>
+                            <li>
+                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30px" height="30px">
+                                <path fill-rule="evenodd" fill="rgb(4, 219, 236)" d="M15.000,0.000 C23.284,0.000 30.000,6.716 30.000,15.000 C30.000,23.284 23.284,30.000 15.000,30.000 C6.716,30.000 -0.000,23.284 -0.000,15.000 C-0.000,6.716 6.716,0.000 15.000,0.000 Z"></path>
+                                <text kerning="auto" font-family="themify" fill="rgb(255, 255, 255)" font-size="14px" x="9px" y="22.0320000000002px"></text>
+                                </svg>
+                            </li>
+                            <li>
+                                <p>Direct Mail Advertising How I Made 47 325 In 30 Days  By Mailing 2 200 Letters</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!--Right Contents  -->
+            <div class="starups-img">
+                <img src="../assets/images/gallery/david2.png" alt="" >
+            </div>
+        </div>
+        
 </div>
 </template>
 
@@ -54,5 +171,12 @@ export default {
 <style scoped>
 .background {
     background-color: #010E21;
+}
+.want{
+    background: white;
+}
+.w-padding3 {
+    /* padding-top: 190px; */
+    padding-bottom: 55px;
 }
 </style>
