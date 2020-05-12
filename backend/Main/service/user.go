@@ -40,18 +40,21 @@ func AddUser(user models.User)error{
 		return err
 	}
 
-	rowsAffected, err := repository.AddUser(user)
-	if err != nil && rowsAffected < 1 {
+	userID, err := repository.AddUser(user)
+	log.Println(userID)
+	if err != nil && userID == 0 {
 		log.Println("Error adding new User failed")
 		return err
 	}
 
 	if user.Type == "Investor"{
 		log.Println("New User is a Investor")
+		user.Investor.UserID = userID
 		err = AddInvestor(user.Investor)
 		return err
 	}else if user.Type == "Student"{
 		log.Println("New User is a student")
+		user.Student.UserID = userID
 		err = AddStudent(user.Student)
 		return err
 	}
@@ -66,10 +69,25 @@ func GetUserType(user models.User)(string, error){
 	return "", nil
 }
 
-//GetProfessionsRoles gets all the Professions roles
-func GetProfessions()(error){
+//GetProfessions gets all the Professions roles
+func GetProfessions()([]models.Profession, error){
 	log.Println("get Professions roles")
-	
-	return nil
+	professions, err := repository.GetProfessions()
+	if err != nil || len(professions) == 0{
+		log.Println("Error retriving professions form the DB, " + err.Error())
+		return []models.Profession{}, err
+	}
+	return professions, nil
+}
+
+//GetProjectCategories gets all the Categories roles
+func GetProjectCategories()([]models.ProjectCategory, error){
+	log.Println("get Professions roles")
+	ProjectCategories, err := repository.GetProjectCategories()
+	if err != nil || ProjectCategories == nil{
+		log.Println("Error retriving Categories form the DB, " + err.Error())
+		return nil, err
+	}
+	return ProjectCategories, nil
 }
 
