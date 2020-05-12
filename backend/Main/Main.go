@@ -1,8 +1,7 @@
 package main
 
-import(
+import (
 	"log"
-
 
 	"github.com/magiconair/properties"
 
@@ -10,46 +9,31 @@ import(
 	"./repository"
 )
 
-var dbConfig repository.Config 
-var serverConfig  controller.Config
-
-
-func init(){
+func init() {
 	log.Println("Initializing")
 	p := properties.MustLoadFile("./config/config.properties", properties.UTF8)
 
-	dbConfig = repository.Config{
-		Username: p.MustGet("DB_USERNAME"),
-		Password: p.MustGet("DB_PASS"),
-		Protocol: p.MustGet("DB_PROTOCOL"),
-		URL: p.MustGet("DB_URL"),
-		Port: p.MustGet("DB_PORT"),
-		Schema: p.MustGet("DB_SCHEMA"),
-	}
+	repository.DNS = p.MustGet("DB_DNS")
+	controller.Addr = p.MustGet("SERVER_ADDR")
 
-	serverConfig = controller.Config{
-		Host: p.MustGet("SERVER_HOST"),
-		Port: p.MustGet("SERVER_PORT"),
-	}
-	//repository.Commit = p.MustGet("DB_COMMIT")
-	
 }
 
-func main(){
-	log.Println("Starting")
+func main() {
+	log.Println("Starting server on", controller.Addr)
 	var err error
 
-	repository.DB, err = repository.Connect(dbConfig)
+	repository.DB, err = repository.Connect()
 	if err != nil {
 		log.Fatal("Error connecting to the server")
 	}
 
 	err = repository.Prepare()
-	if err != nil{
+	if err != nil {
 		log.Fatal("Error preparing the Stmt ", err.Error())
 	}
+	log.Println("Successfully prepared the Stmt")
 
-	err = controller.StartServer(serverConfig)
+	err = controller.StartServer()
 	if err != nil {
 		log.Fatal("Error starting the Server", err.Error())
 	}
