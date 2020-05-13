@@ -19,16 +19,16 @@ func StartServer() error {
 	r := mux.NewRouter().StrictSlash(true)
 	secure := r.PathPrefix("/auth").Subrouter()
 	secure.Use(isAuth)
-	
+
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "hello World ")
 	})
-	
+
 	r.HandleFunc("/addUser", addUser).Methods("POST")
 	r.HandleFunc("/getProfessions", getProfessions).Methods("GET")
 	r.HandleFunc("/getProjectCategories", getProjectCategories).Methods("GET")
 
-	secure.HandleFunc("/getUser", func(w http.ResponseWriter, r *http.Request){
+	secure.HandleFunc("/getUser", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "authenticated")
 	})
 

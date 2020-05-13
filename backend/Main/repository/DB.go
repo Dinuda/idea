@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	
 	//Driver to intrigate with MySql
 	_ "github.com/go-sql-driver/mysql"
 )

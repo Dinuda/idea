@@ -1,5 +1,14 @@
 package controller
 
+import (
+	"log"
+	"net/http"
+	"encoding/json"
+	"io/ioutil"
+
+	"../models"
+	"../service"
+)
 
 //adds a new user
 func addUser(w http.ResponseWriter, r *http.Request) {

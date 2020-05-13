@@ -2,11 +2,7 @@ package repository
 
 import (
 	"log"
-	"encoding/json"
-	"io/ioutil"
 
-	"../repository"
-	"../service"
 	"../models"
 )
 
@@ -81,12 +77,12 @@ func GetProfessions() ([]models.Profession, error) {
 	for result.Next() {
 		var profession models.Profession
 		err = result.Scan(&profession.ID, &profession.Name)
-		if err != nil{
+		if err != nil {
 			return []models.Profession{}, err
 		}
 		professions = append(professions, profession)
 	}
-	
+
 	return professions, err
 }
 
@@ -100,12 +96,12 @@ func GetProjectCategories() ([]models.ProjectCategory, error) {
 	for result.Next() {
 		var projectCategory models.ProjectCategory
 		err = result.Scan(&projectCategory.ID, &projectCategory.Name)
-		if err != nil{
+		if err != nil {
 			return []models.ProjectCategory{}, err
 		}
 		projectCategories = append(projectCategories, projectCategory)
 	}
-	
+
 	return projectCategories, err
 }
 
