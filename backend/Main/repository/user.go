@@ -1,6 +1,14 @@
 package repository
 
-import "../models"
+import (
+	"log"
+	"encoding/json"
+	"io/ioutil"
+
+	"../repository"
+	"../service"
+	"../models"
+)
 
 //AddUser adds a new user
 func AddUser(user models.User) (int, error) {

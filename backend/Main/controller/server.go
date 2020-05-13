@@ -1,18 +1,14 @@
 package controller
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
 
-	"../models"
 	"../pkg"
 	"../repository"
-	"../service"
 )
 
 //Addr used to configure the server
