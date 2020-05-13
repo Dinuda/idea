@@ -20,6 +20,7 @@ var (
 	insertUserStmt,
 	insertInvestorStmt,
 	insertStudentStmt,
+	selectUserStmt,
 	selectInvestorStmt,
 	selectPasswordStmt,
 	selectProjectCatagoriesStmt,
@@ -82,9 +83,22 @@ func Prepare() error {
 		return fmt.Errorf("Error preparing insertStudentStmt, " + err.Error())
 	}
 
-	selectInvestorStmt, err = DB.Prepare(`SELECT * FROM users INNER JOIN investors ON users.id=investors.user_id  WHERE users.id=?`)
+	selectUserStmt, err = DB.Prepare(`SELECT
+		firstname, 
+		lastname, 
+		email, 
+		phone_no, 
+		date_of_birth, 
+		description, 
+		type 
+		FROM users WHERE id=?`)
 	if err != nil {
 		return fmt.Errorf("Error preparing selectUserStmt, " + err.Error())
+	}
+
+	selectInvestorStmt, err = DB.Prepare(`SELECT * FROM users INNER JOIN investors ON users.id=investors.user_id  WHERE users.id=?`)
+	if err != nil {
+		return fmt.Errorf("Error preparing selectInvestorStmt, " + err.Error())
 	}
 
 	selectProfessionsStmt, err = DB.Prepare(`SELECT * FROM professions`)
