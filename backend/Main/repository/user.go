@@ -1,5 +1,6 @@
 package repository
 
+import "../models"
 
 //AddUser adds a new user
 func AddUser(user models.User) (int, error) {

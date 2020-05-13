@@ -6,8 +6,6 @@ import (
 	"log"
 	//Driver to intrigate with MySql
 	_ "github.com/go-sql-driver/mysql"
-
-	"../models"
 )
 
 //DB DB connection
