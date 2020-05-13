@@ -5,14 +5,16 @@
             <div class="col fill_height">
                 <form class="counter_form_content d-flex flex-column align-items-center justify-content-center" action='/#/submit_user_signup' method="POST" >
                     <div class="counter_form_title">Register to buy courses</div>
-                    <input type="text" name="name" class="counter_input" placeholder="Your Name:" required="required">
+                    <input type="tel" name="username" class="counter_input" placeholder="UserName:" required="required">
+                    <input type="tel" name="password" class="counter_input" placeholder="Password:" required="required">
+                    <input type="text" name="firstnamename" class="counter_input" placeholder="Your Name:" required="required">
+                    <input type="text" name="lastnamename" class="counter_input" placeholder="Your Name:" required="required">
                     <input type="tel" name="phone" class="counter_input" placeholder="Phone:">
                     <input type="tel" name="email" class="counter_input" placeholder="E-mail:" required="required">
                     <input type="tel" name="child_name" class="counter_input" placeholder="Child's Name:" required="required">
-                    <input type="tel" name="username" class="counter_input" placeholder="UserName:" required="required">
-                    <input type="tel" name="password" class="counter_input" placeholder="Password:" required="required">
                     <select name="counter_select" id="counter_select"  class="counter_input counter_options" placeholder="Your interests">
-                        <option>Your Interests</option>
+
+                        <option id="{professionID}">Your Interests</option>
                         <option>Programming</option>
                         <option>Creating</option>
                         <option>Problem solving</option>
