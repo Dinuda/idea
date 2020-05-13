@@ -22,7 +22,6 @@ type Student struct {
 	UserID     int
 	TeamID     int
 	Profession int
-	University string
 	CV         string
 	TeamRole   string
 }
