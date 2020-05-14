@@ -1,109 +1,10 @@
 package repository
 
 import (
-	"database/sql"
-	"fmt"
 	"log"
-	//Driver to intrigate with MySql
-	_ "github.com/go-sql-driver/mysql"
 
 	"../models"
 )
-
-//DB DB connection
-var DB *sql.DB
-
-//DNS to get DB properties
-var DNS string
-
-var (
-	insertUserStmt,
-	insertInvestorStmt,
-	insertStudentStmt,
-	selectInvestorStmt,
-	selectPasswordStmt,
-	selectProjectCatagoriesStmt,
-	selectProfessionsStmt *sql.Stmt
-)
-
-//Connect is used to connect to the db
-func Connect() (*sql.DB, error) {
-	log.Println("Connecting to the DB")
-	db, err := sql.Open("mysql", DNS)
-	err = db.Ping()
-	if err != nil {
-		return nil, err
-	}
-	log.Println("Connected to the DB")
-	return db, err
-}
-
-//Prepare is used to prepare the sql stmt
-func Prepare() error {
-	var err error
-
-	insertUserStmt, err = DB.Prepare(`INSERT INTO users 
-		(
-			username, 
-			password, 
-			firstname, 
-			lastname, 
-			email, 
-			phone_no, 
-			date_of_birth, 
-			description, 
-			type
-		) 
-		VALUES(?,?,?,?,?,?,?,?,?)`)
-	if err != nil {
-		return fmt.Errorf("Error preparing insertUserStmt, " + err.Error())
-	}
-
-	insertInvestorStmt, err = DB.Prepare(`INSERT INTO investors 
-		(
-			user_id,
-			linkedin, 
-			company
-		) 
-		VALUES(?,?,?)`)
-	if err != nil {
-		return fmt.Errorf("Error preparing insertInvestorStmt, " + err.Error())
-	}
-
-	insertStudentStmt, err = DB.Prepare(`INSERT INTO students 
-		(
-			profession, 
-			university, 
-			cv,
-			team_role 
-		) 
-		VALUES(?,?,?,?)`)
-	if err != nil {
-		return fmt.Errorf("Error preparing insertStudentStmt, " + err.Error())
-	}
-
-	selectInvestorStmt, err = DB.Prepare(`SELECT * FROM users INNER JOIN investors ON users.id=investors.user_id  WHERE users.id=?`)
-	if err != nil {
-		return fmt.Errorf("Error preparing selectUserStmt, " + err.Error())
-	}
-
-	selectProfessionsStmt, err = DB.Prepare(`SELECT * FROM professions`)
-	if err != nil {
-		return fmt.Errorf("Error preparing selectProfessionsStmt, " + err.Error())
-	}
-
-	selectProjectCatagoriesStmt, err = DB.Prepare(`SELECT * FROM categories`)
-	if err != nil {
-		return fmt.Errorf("Error preparing selectProjectCategoryStmt, " + err.Error())
-	}
-
-	selectPasswordStmt, err = DB.Prepare(`SELECT password FROM users WHERE username = ?`)
-	if err != nil {
-		return fmt.Errorf("Error preparing the selectPasswordStmt, " + err.Error())
-	}
-
-	return nil
-}
 
 //AddUser adds a new user
 func AddUser(user models.User) (int, error) {
@@ -168,36 +69,43 @@ func AddStudent(student models.Student) (int64, error) {
 
 //GetProfessions get all the professions from the db
 func GetProfessions() ([]models.Profession, error) {
+	var professions []models.Profession
 	result, err := selectProfessionsStmt.Query()
 	if err != nil {
-		return []models.Profession{}, err
+		return professions, err
 	}
-	var professions []models.Profession
+	
 	for result.Next() {
 		var profession models.Profession
-		err = result.Scan(&profession)
-		if err != nil{
+		err = result.Scan(&profession.ID, &profession.Name)
+		if err != nil {
 			return []models.Profession{}, err
 		}
 		professions = append(professions, profession)
 	}
+
 	return professions, err
 }
 
-//GetProjectCategories get all the category from the db
-func GetProjectCategories() ([]models.ProjectCategory, error) {
-	result, err := selectProfessionsStmt.Query()
+//GetUser get all the infomation of the User
+func GetUser(username string)(models.User, error){
+	var user models.User
+	err := selectUserStmt.QueryRow(username).Scan(
+		&user.Firstname,
+		&user.Lastname,
+		&user.Email,
+		&user.PhoneNo,
+		&user.DateofBirth,
+		&user.Description,
+		&user.Type,
+	)
 	if err != nil {
-		return []models.ProjectCategory{}, err
+		return user, err
 	}
-	var projectCategories []models.ProjectCategory
-	for result.Next() {
-		var projectCategory models.ProjectCategory
-		result.Scan(&projectCategory)
-		projectCategories = append(projectCategories, projectCategory)
-	}
-	return projectCategories, err
+	return user, nil
+	
 }
+
 
 //GetUserPassword retrieves password for a specific user
 func GetUserPassword(username string) (string, error) {

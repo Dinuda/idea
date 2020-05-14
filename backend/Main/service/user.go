@@ -1,18 +1,19 @@
 package service
 
 import (
-	"log"
 	"fmt"
-	
+	"log"
 
-	"../pkg"
+
+
 	"../models"
+	"../pkg"
 	"../repository"
 )
 
 //AddUser is used to and a new User
-func AddUser(user models.User)error{
-	AddInvestor := func(investor models.Investor)error{
+func AddUser(user models.User) error {
+	AddInvestor := func(investor models.Investor) error {
 		log.Println("Adding an Investor")
 		rowsAffected, err := repository.AddInvestor(investor)
 		if err != nil && rowsAffected < 1 {
@@ -21,7 +22,7 @@ func AddUser(user models.User)error{
 		}
 		return nil
 	}
-	AddStudent := func(student models.Student)error{
+	AddStudent := func(student models.Student) error {
 		log.Println("Adding an Student")
 		rowsAffected, err := repository.AddStudent(student)
 		if err != nil && rowsAffected < 1 {
@@ -31,11 +32,10 @@ func AddUser(user models.User)error{
 		return nil
 	}
 
-
 	log.Println("Adding a new User")
 	hasedPass, err := pkg.GenarateHash(user.Password)
 	user.Password = hasedPass
-	if err != nil{
+	if err != nil {
 		log.Println("Error hashing the password")
 		return err
 	}
@@ -47,12 +47,12 @@ func AddUser(user models.User)error{
 		return err
 	}
 
-	if user.Type == "Investor"{
+	if user.Type == "Investor" {
 		log.Println("New User is a Investor")
 		user.Investor.UserID = userID
 		err = AddInvestor(user.Investor)
 		return err
-	}else if user.Type == "Student"{
+	} else if user.Type == "Student" {
 		log.Println("New User is a student")
 		user.Student.UserID = userID
 		err = AddStudent(user.Student)
@@ -61,33 +61,32 @@ func AddUser(user models.User)error{
 
 	return fmt.Errorf("User type not Given But a new user is added")
 
-	
 }
+
 //GetUserType gets the user type investor|student
-func GetUserType(user models.User)(string, error){
+func GetUserType(user models.User) (string, error) {
 	log.Println("getting user type")
 	return "", nil
 }
 
 //GetProfessions gets all the Professions roles
-func GetProfessions()([]models.Profession, error){
-	log.Println("get Professions roles")
+func GetProfessions() ([]models.Profession, error) {
+	log.Println("Getting Professions roles")
 	professions, err := repository.GetProfessions()
-	if err != nil || len(professions) == 0{
+	if err != nil || len(professions) < 1 {
 		log.Println("Error retriving professions form the DB, " + err.Error())
 		return []models.Profession{}, err
 	}
 	return professions, nil
 }
 
-//GetProjectCategories gets all the Categories roles
-func GetProjectCategories()([]models.ProjectCategory, error){
-	log.Println("get Professions roles")
-	ProjectCategories, err := repository.GetProjectCategories()
-	if err != nil || ProjectCategories == nil{
-		log.Println("Error retriving Categories form the DB, " + err.Error())
-		return nil, err
-	}
-	return ProjectCategories, nil
-}
 
+//GetUser gets all the data from the user
+func GetUser(username string)(models.User, error){
+	user, err := repository.GetUser(username)
+	if err != nil {
+		log.Println("Error getting user,", username, " error ", err.Error())
+		return user, err
+	}
+	return user, nil
+}
