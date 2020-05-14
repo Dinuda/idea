@@ -69,11 +69,12 @@ func AddStudent(student models.Student) (int64, error) {
 
 //GetProfessions get all the professions from the db
 func GetProfessions() ([]models.Profession, error) {
+	var professions []models.Profession
 	result, err := selectProfessionsStmt.Query()
 	if err != nil {
-		return []models.Profession{}, err
+		return professions, err
 	}
-	var professions []models.Profession
+	
 	for result.Next() {
 		var profession models.Profession
 		err = result.Scan(&profession.ID, &profession.Name)
@@ -86,24 +87,25 @@ func GetProfessions() ([]models.Profession, error) {
 	return professions, err
 }
 
-//GetProjectCategories get all the category from the db
-func GetProjectCategories() ([]models.ProjectCategory, error) {
-	result, err := selectProjectCatagoriesStmt.Query()
+//GetUser get all the infomation of the User
+func GetUser(username string)(models.User, error){
+	var user models.User
+	err := selectUserStmt.QueryRow(username).Scan(
+		&user.Firstname,
+		&user.Lastname,
+		&user.Email,
+		&user.PhoneNo,
+		&user.DateofBirth,
+		&user.Description,
+		&user.Type,
+	)
 	if err != nil {
-		return []models.ProjectCategory{}, err
+		return user, err
 	}
-	var projectCategories []models.ProjectCategory
-	for result.Next() {
-		var projectCategory models.ProjectCategory
-		err = result.Scan(&projectCategory.ID, &projectCategory.Name)
-		if err != nil {
-			return []models.ProjectCategory{}, err
-		}
-		projectCategories = append(projectCategories, projectCategory)
-	}
-
-	return projectCategories, err
+	return user, nil
+	
 }
+
 
 //GetUserPassword retrieves password for a specific user
 func GetUserPassword(username string) (string, error) {

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 
+
+
 	"../models"
 	"../pkg"
 	"../repository"
@@ -78,13 +80,13 @@ func GetProfessions() ([]models.Profession, error) {
 	return professions, nil
 }
 
-//GetProjectCategories gets all the Categories roles
-func GetProjectCategories() ([]models.ProjectCategory, error) {
-	log.Println("Getting Category roles")
-	ProjectCategories, err := repository.GetProjectCategories()
-	if err != nil || len(ProjectCategories) < 1 {
-		log.Println("Error retriving Categories form the DB, " + err.Error())
-		return []models.ProjectCategory{}, err
+
+//GetUser gets all the data from the user
+func GetUser(username string)(models.User, error){
+	user, err := repository.GetUser(username)
+	if err != nil {
+		log.Println("Error getting user,", username, " error ", err.Error())
+		return user, err
 	}
-	return ProjectCategories, nil
+	return user, nil
 }

@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"io/ioutil"
 
+	"github.com/gorilla/mux"
+
 	"../models"
 	"../service"
 )
@@ -56,16 +58,15 @@ func getProfessions(w http.ResponseWriter, r *http.Request) {
 
 }
 
-//gets all the categories of the projects
-func getProjectCategories(w http.ResponseWriter, r *http.Request) {
-	log.Println("Getting Categories")
-	projectCategories, err := service.GetProjectCategories()
+func getUser(w http.ResponseWriter, r *http.Request){
+	log.Println("Getting User Info")
+	username := mux.Vars(r)["username"]
+	user, err := service.GetUser(username)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		return
 	}
-	if err := json.NewEncoder(w).Encode(projectCategories); err != nil {
-		log.Println("Error responding to the /getProjectCategories")
+	if err := json.NewEncoder(w).Encode(user); err != nil {
+		log.Println("Error responding to /GetUser ", err.Error())
 	}
 
 }

@@ -28,9 +28,7 @@ func StartServer() error {
 	r.HandleFunc("/getProfessions", getProfessions).Methods("GET")
 	r.HandleFunc("/getProjectCategories", getProjectCategories).Methods("GET")
 
-	secure.HandleFunc("/getUser", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "authenticated")
-	})
+	secure.HandleFunc("/getUser", getUser).Methods("GET")
 
 	return http.ListenAndServe(Addr, r)
 }
