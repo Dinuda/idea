@@ -76,7 +76,7 @@ func Prepare() error {
 			profession, 
 			cv
 		) 
-		VALUES(?,?,?,?)`)
+		VALUES(?,?)`)
 	if err != nil {
 		return fmt.Errorf("Error preparing insertStudentStmt, " + err.Error())
 	}
