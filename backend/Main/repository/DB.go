@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	
+
 	//Driver to intrigate with MySql
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -74,7 +74,7 @@ func Prepare() error {
 	insertStudentStmt, err = DB.Prepare(`INSERT INTO students 
 		(
 			profession, 
-			cvs
+			cv
 		) 
 		VALUES(?,?,?,?)`)
 	if err != nil {
