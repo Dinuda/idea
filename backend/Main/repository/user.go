@@ -53,9 +53,7 @@ func AddStudent(student models.Student) (int64, error) {
 	log.Println("Adding a new Student User to the DB")
 	result, err := insertStudentStmt.Exec(
 		student.Profession,
-		student.University,
 		student.CV,
-		student.TeamRole,
 	)
 	if err != nil {
 		return 0, err

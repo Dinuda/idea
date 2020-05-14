@@ -74,9 +74,7 @@ func Prepare() error {
 	insertStudentStmt, err = DB.Prepare(`INSERT INTO students 
 		(
 			profession, 
-			university, 
-			cv,
-			team_role 
+			cvs
 		) 
 		VALUES(?,?,?,?)`)
 	if err != nil {
