@@ -29,7 +29,7 @@ func getProjectCategories(w http.ResponseWriter, r *http.Request) {
 func createProject(w http.ResponseWriter, r *http.Request) {
 	log.Println("Creating a new Project")
 	var project models.Project
-	username := mux.Vars(r)["username"]
+	username := r.Header.Get("username")
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		log.Println("Error reading the body of /createProject, " + err.Error())
@@ -54,4 +54,19 @@ func createProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	json.NewEncoder(w).Encode(project)
+}
+
+
+func addStudentToTeam(w http.ResponseWriter, r *http.Request){
+	log.Println("Adding a student to a team")
+	username := r.Header.Get("username")
+	teamID := mux.Vars(r)["teamID"]
+	err := service.AddStudentToTeam(username, teamID)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, err)
+		return
+	}
+	fmt.Fprintf(w, "Successfully added the student to the team")
 }

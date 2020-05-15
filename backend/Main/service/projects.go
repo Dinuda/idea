@@ -43,3 +43,18 @@ func CreateProject(project models.Project, username string) (models.Project, err
 	return project, nil
 
 }
+
+//AddStudentToTeam adds a new student to the studentteam of the project
+func AddStudentToTeam(username string, teamID int) (error){
+	log.Println("Adding a student to a team")
+	userID, err := repository.GetUserID(username)
+	if err != nil {
+		log.Println("Error getting the user id, " + err.Error())
+		return fmt.Errorf("Error getting the user id, " + err.Error())
+	}
+	rowsAffected, err := repository.AddStudentToTeam(teamID, userID)
+	if err != nil || rowsAffected  < 1{
+		return err
+	}
+	return nil
+}

@@ -23,6 +23,7 @@ var (
 	insertProjectStmt,
 	createStudentTeamStmt,
 	createInvestorTeamStmt,
+	insertStudentToTeamStmt,
 	selectUserStmt,
 	selectUserIDStmt,
 	selectInvestorStmt,
@@ -105,6 +106,14 @@ func Prepare() error {
 		VALUES(?)`)
 	if err != nil {
 		return fmt.Errorf("Error preparing createStudentTeamStmt, " + err.Error())
+	}
+
+	insertStudentToTeamStmt, err = DB.Prepare(`INSERT INTO studentteam (
+		id, 
+		user_id
+		) VALUES(?,?)`)
+	if err != nil {
+		return fmt.Errorf("Error preparing insertStudentToTeamStmt, " + err.Error())
 	}
 
 	createInvestorTeamStmt, err = DB.Prepare(`INSERT INTO investorteam

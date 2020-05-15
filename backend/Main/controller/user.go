@@ -60,7 +60,7 @@ func getProfessions(w http.ResponseWriter, r *http.Request) {
 
 func getUser(w http.ResponseWriter, r *http.Request){
 	log.Println("Getting User Info")
-	username := mux.Vars(r)["username"]
+	username := mux.header.Get("username")
 	user, err := service.GetUser(username)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
