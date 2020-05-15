@@ -29,7 +29,7 @@ func StartServer() error {
 	r.HandleFunc("/getProjectCategories", getProjectCategories).Methods("GET")
 
 	secure.HandleFunc("/getUser", getUser).Methods("GET")
-	secure.HandleFunc("createProject", createProject).Methods("POST")
+	secure.HandleFunc("/createProject", createProject).Methods("POST")
 
 	return http.ListenAndServe(Addr, r)
 }
