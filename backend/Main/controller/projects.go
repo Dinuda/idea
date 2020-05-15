@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 
 	"../models"
 	"../service"
@@ -61,11 +62,12 @@ func addStudentToTeam(w http.ResponseWriter, r *http.Request){
 	log.Println("Adding a student to a team")
 	username := r.Header.Get("username")
 	teamID := mux.Vars(r)["teamID"]
-	err := service.AddStudentToTeam(username, teamID)
+	intTeamID, _ := strconv.Atoi(teamID)
+	err := service.AddStudentToTeam(username, intTeamID)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(w, err)
+		fmt.Fprintf(w, err.Error())
 		return
 	}
 	fmt.Fprintf(w, "Successfully added the student to the team")

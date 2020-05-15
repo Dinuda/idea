@@ -110,7 +110,7 @@ func Prepare() error {
 
 	insertStudentToTeamStmt, err = DB.Prepare(`INSERT INTO studentteam (
 		id, 
-		user_id
+		student_id
 		) VALUES(?,?)`)
 	if err != nil {
 		return fmt.Errorf("Error preparing insertStudentToTeamStmt, " + err.Error())

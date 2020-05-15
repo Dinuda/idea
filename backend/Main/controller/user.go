@@ -6,8 +6,6 @@ import (
 	"encoding/json"
 	"io/ioutil"
 
-	"github.com/gorilla/mux"
-
 	"../models"
 	"../service"
 )
@@ -60,7 +58,7 @@ func getProfessions(w http.ResponseWriter, r *http.Request) {
 
 func getUser(w http.ResponseWriter, r *http.Request){
 	log.Println("Getting User Info")
-	username := mux.header.Get("username")
+	username := r.Header.Get("username")
 	user, err := service.GetUser(username)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
