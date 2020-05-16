@@ -85,7 +85,7 @@ DROP TABLE IF EXISTS `investorteam`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `investorteam` (
-  `id` int(11) NOT NULL,
+  `id` char(40) NOT NULL,
   `investor_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `investor_id` (`investor_id`),
@@ -127,6 +127,33 @@ INSERT INTO `professions` VALUES (1,'Software Engineer'),(2,'Mobile Developer'),
 /*!40000 ALTER TABLE `professions` ENABLE KEYS */;
 UNLOCK TABLES;
 
+DROP TABLE IF EXISTS `studentteam`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `studentteam` (
+  `id` char(40) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  `title` text,
+  PRIMARY KEY (`id`),
+  KEY `studentteam_fk0` (`student_id`),
+  CONSTRAINT `studentteam_fk0` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `studentteam`
+--
+
+LOCK TABLES `studentteam` WRITE;
+/*!40000 ALTER TABLE `studentteam` DISABLE KEYS */;
+/*!40000 ALTER TABLE `studentteam` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `users`
+-- Table structure for table `users`
+--
+
 --
 -- Table structure for table `projects`
 --
@@ -140,8 +167,8 @@ CREATE TABLE `projects` (
   `description` text NOT NULL,
   `created_date` date NOT NULL,
   `closed_date` date DEFAULT NULL,
-  `investorteam_id` int(11) DEFAULT NULL,
-  `studentteam_id` int(11) DEFAULT NULL,
+  `investorteam_id` char(40) DEFAULT NULL,
+  `studentteam_id` char(40) DEFAULT NULL,
   `category` varchar(45) DEFAULT NULL,
   `host_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -200,31 +227,6 @@ UNLOCK TABLES;
 -- Table structure for table `studentteam`
 --
 
-DROP TABLE IF EXISTS `studentteam`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
-CREATE TABLE `studentteam` (
-  `id` int(11) NOT NULL,
-  `student_id` int(11) NOT NULL,
-  `title` text,
-  PRIMARY KEY (`id`),
-  KEY `studentteam_fk0` (`student_id`),
-  CONSTRAINT `studentteam_fk0` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `studentteam`
---
-
-LOCK TABLES `studentteam` WRITE;
-/*!40000 ALTER TABLE `studentteam` DISABLE KEYS */;
-/*!40000 ALTER TABLE `studentteam` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `users`
---
 
 DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
