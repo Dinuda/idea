@@ -49,7 +49,6 @@ func AddInvestor(investor models.Investor) (int64, error) {
 
 //AddStudent adds a new Investor
 func AddStudent(student models.Student) (int64, error) {
-	log.Println("Adding a new Student User to the DB")
 	result, err := insertStudentStmt.Exec(
 		student.UserID,
 		student.Profession,

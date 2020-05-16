@@ -10,7 +10,6 @@ import (
 
 //GetProjectCategories gets all the Categories roles
 func GetProjectCategories() ([]models.ProjectCategory, error) {
-	log.Println("Getting Category roles")
 	projectCategories, err := repository.GetProjectCategories()
 	if err != nil || len(projectCategories) < 1 {
 		log.Println("Error retriving Categories form the DB, " + err.Error())
@@ -46,7 +45,6 @@ func CreateProject(project models.Project, username string) (models.Project, err
 
 //AddStudentToTeam adds a new student to the studentteam of the project
 func AddStudentToTeam(username string, teamID int) (error){
-	log.Println("Adding a student to a team")
 	userID, err := repository.GetUserID(username)
 	if err != nil {
 		log.Println("Error getting the user id, " + err.Error())

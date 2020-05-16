@@ -25,7 +25,6 @@ type claims struct {
 	username string 
 	jwt.StandardClaims
 }
-
 var jwtKey = []byte(`MIICXAIBAAKBgHTSnN3g0neR4kPUiPRA3Qb6T7zbSh31uvRcKsSR5lF5mprnYr6a
 	Q8VwSyj/gimUZk7z4zeNkl5yyJCmzUxeOAs/Xt+sq4yscqwik1EXwTyZGm0e45MW
 	2/h4PEUFELMAUtqy20HpUKXuKzNZsz20bdTS1pgA+hN33Uib68cYQNmXAgMBAAEC
@@ -52,13 +51,13 @@ func StartServer() error {
 		fmt.Fprintf(w, "hello World ")
 	})
 
-	r.HandleFunc("/addUser", addUser).Methods("PUT")
-	r.HandleFunc("/getProfessions", getProfessions).Methods("GET")
-	r.HandleFunc("/getProjectCategories", getProjectCategories).Methods("GET")
+	r.HandleFunc("/user", addUser).Methods("PUT")
+	r.HandleFunc("/professions", getProfessions).Methods("GET")
+	r.HandleFunc("/projectCategories", getProjectCategories).Methods("GET")
 	r.HandleFunc("/login", auth).Methods("POST")
 
-	secure.HandleFunc("/getUser", getUser).Methods("GET")
-	secure.HandleFunc("/createProject", createProject).Methods("POST")
+	secure.HandleFunc("/user", getUser).Methods("GET")
+	secure.HandleFunc("/project", createProject).Methods("POST")
 
 	return http.ListenAndServe(Addr, r)
 }
