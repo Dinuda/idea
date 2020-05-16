@@ -40,8 +40,8 @@ func AddInvestor(investor models.Investor) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-	rowsAffected, errResult := result.RowsAffected()
-	if errResult != nil {
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
 		return 0, err
 	}
 	return rowsAffected, nil
@@ -57,8 +57,8 @@ func AddStudent(student models.Student) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-	rowsAffected, errResult := result.RowsAffected()
-	if errResult != nil {
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
 		return 0, err
 	}
 	return rowsAffected, nil

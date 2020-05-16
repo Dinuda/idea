@@ -132,7 +132,7 @@ func Prepare() error {
 		phone_no, 
 		description, 
 		type 
-		FROM users WHERE id=?`)
+		FROM users WHERE username=?`)
 	if err != nil {
 		return fmt.Errorf("Error preparing selectUserStmt, " + err.Error())
 	}

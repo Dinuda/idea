@@ -146,6 +146,11 @@ func isAuth(next http.Handler) http.Handler {
 				w.WriteHeader(http.StatusUnauthorized)
 				return
 			}
+			v, _ := err.(*jwt.ValidationError)
+			if v.Errors == jwt.ValidationErrorExpired {
+				w.WriteHeader(http.StatusUnauthorized)
+				return
+			}
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
