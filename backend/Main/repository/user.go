@@ -16,7 +16,6 @@ func AddUser(user models.User) (int, error) {
 		user.Lastname,
 		user.Email,
 		user.PhoneNo,
-		user.DateofBirth,
 		user.Description,
 		user.Type,
 	)
@@ -52,6 +51,7 @@ func AddInvestor(investor models.Investor) (int64, error) {
 func AddStudent(student models.Student) (int64, error) {
 	log.Println("Adding a new Student User to the DB")
 	result, err := insertStudentStmt.Exec(
+		student.UserID,
 		student.Profession,
 		student.CV,
 	)
@@ -93,7 +93,6 @@ func GetUser(username string)(models.User, error){
 		&user.Lastname,
 		&user.Email,
 		&user.PhoneNo,
-		&user.DateofBirth,
 		&user.Description,
 		&user.Type,
 	)

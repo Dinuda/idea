@@ -14,8 +14,19 @@ import (
 	"../pkg"
 	"../repository"
 )
+//Credentials to keep track of credentials
+type credentials struct {
+	username string
+	password string
+}
 
-const jwtKey = []byte(`MIICXAIBAAKBgHTSnN3g0neR4kPUiPRA3Qb6T7zbSh31uvRcKsSR5lF5mprnYr6a
+//Claims of the token
+type claims struct {
+	username string 
+	jwt.StandardClaims
+}
+
+var jwtKey = []byte(`MIICXAIBAAKBgHTSnN3g0neR4kPUiPRA3Qb6T7zbSh31uvRcKsSR5lF5mprnYr6a
 	Q8VwSyj/gimUZk7z4zeNkl5yyJCmzUxeOAs/Xt+sq4yscqwik1EXwTyZGm0e45MW
 	2/h4PEUFELMAUtqy20HpUKXuKzNZsz20bdTS1pgA+hN33Uib68cYQNmXAgMBAAEC
 	gYBHl6bApv30fve9/+rqXTHXC+F/6Je0YppvFGi1TIBsX+yqj7DJBDsSLW4yMtuu
@@ -53,7 +64,7 @@ func StartServer() error {
 }
 
 func auth(w http.ResponseWriter, r *http.Request){
-	var credentials models.Credentials
+	var credentials credentials
 	
 	body, err := ioutil.ReadAll(r.Body)
 	//fmt.Println(body)
@@ -77,7 +88,7 @@ func auth(w http.ResponseWriter, r *http.Request){
 			return
 		}
 		if err != nil {
-			log.Println("Error finding the password for the username, ", username)
+			log.Println("Error finding the password for the username, ", credentials.username)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
@@ -89,28 +100,54 @@ func auth(w http.ResponseWriter, r *http.Request){
 		}
 		exp := time.Now().Add(1 *time.Hour)
 
-		claims := jwt.MapClaims{}
-		claims["username"] = credentials.username
-		claims["exp"] = exp.Unix()
+		claims := &claims{
+			username: credentials.username,
+			StandardClaims: jwt.StandardClaims{
+				// In JWT, the expiry time is expressed as unix milliseconds
+				ExpiresAt: exp.Unix(),
+			},
+		}
+	
 		
-		token := jwt
+		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	
+		tokenString, err := token.SignedString(jwtKey)
+
+		if err != nil {
+			log.Println("Error creating the token, " + err.Error())
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		err = json.NewEncoder(w).Encode(tokenString)
+		if err != nil {
+			log.Println("Error sending the token, " + err.Error())
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 
 }
 
 //to authenticate the users
 func isAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		token := r.Header.Get("Token")
-		username := r.Header.Get("username")
-		password := r.Header.Get("password")
-		if username == "" || password == "" {
-			fmt.Fprintf(w, "User or Password not given")
-			w.WriteHeader(http.StatusUnprocessableEntity)
+		tokenString := r.Header.Get("Token")
+		
+		claims := &claims{}
+		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+			return jwtKey, nil
+		})
+		if err != nil {
+			if err == jwt.ErrSignatureInvalid {
+				w.WriteHeader(http.StatusUnauthorized)
+				return
+			}
+			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		fmt.Println(username, password)
-		
-
+		if !token.Valid {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
 		next.ServeHTTP(w, r)
 	})
 }

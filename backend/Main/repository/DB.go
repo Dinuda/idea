@@ -56,11 +56,10 @@ func Prepare() error {
 			lastname, 
 			email, 
 			phone_no, 
-			date_of_birth, 
 			description, 
 			type
 		) 
-		VALUES(?,?,?,?,?,?,?,?,?)`)
+		VALUES(?,?,?,?,?,?,?,?)`)
 	if err != nil {
 		return fmt.Errorf("Error preparing insertUserStmt, " + err.Error())
 	}
@@ -77,11 +76,12 @@ func Prepare() error {
 	}
 
 	insertStudentStmt, err = DB.Prepare(`INSERT INTO students 
-		(
+		(	
+			user_id,
 			profession, 
 			cv
 		) 
-		VALUES(?,?)`)
+		VALUES(?,?,?)`)
 	if err != nil {
 		return fmt.Errorf("Error preparing insertStudentStmt, " + err.Error())
 	}
@@ -130,7 +130,6 @@ func Prepare() error {
 		lastname, 
 		email, 
 		phone_no, 
-		date_of_birth, 
 		description, 
 		type 
 		FROM users WHERE id=?`)
