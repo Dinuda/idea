@@ -143,7 +143,7 @@ CREATE TABLE `projects` (
   `investorteam_id` int(11) DEFAULT NULL,
   `studentteam_id` int(11) DEFAULT NULL,
   `category` varchar(45) DEFAULT NULL,
-  `projectscol` int(11) DEFAULT NULL,
+  `host_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`),
   UNIQUE KEY `investorteam_id` (`investorteam_id`),

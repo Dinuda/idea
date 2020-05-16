@@ -43,7 +43,7 @@ type Project struct {
 	CreatedDate    string
 	ClosedDate     string
 	InvestorTeamID int
-	StudentTeamIDs []int  // Team id is used to get the info
+	StudentTeamID  int  // Team id is used to get the info
 	Category       int //Agriculture, IT,
 }
 

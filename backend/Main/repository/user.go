@@ -111,3 +111,10 @@ func GetUserPassword(username string) (string, error) {
 	err := selectPasswordStmt.QueryRow(username).Scan(&password)
 	return password, err
 }
+
+//GetUserID gets the user id
+func GetUserID(username string) (int, error){
+	var userID int
+	err := selectUserIDStmt.QueryRow(username).Scan(&userID)
+	return userID, err
+}
