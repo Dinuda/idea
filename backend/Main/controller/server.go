@@ -16,8 +16,8 @@ import (
 )
 //Credentials to keep track of credentials
 type credentials struct {
-	username string
-	password string
+	Username string 
+	Password string
 }
 
 //Claims of the token
@@ -55,7 +55,7 @@ func StartServer() error {
 	r.HandleFunc("/addUser", addUser).Methods("PUT")
 	r.HandleFunc("/getProfessions", getProfessions).Methods("GET")
 	r.HandleFunc("/getProjectCategories", getProjectCategories).Methods("GET")
-	r.HandleFunc("/auth", auth).Methods("POST")
+	r.HandleFunc("/login", auth).Methods("POST")
 
 	secure.HandleFunc("/getUser", getUser).Methods("GET")
 	secure.HandleFunc("/createProject", createProject).Methods("POST")
@@ -80,19 +80,19 @@ func auth(w http.ResponseWriter, r *http.Request){
 		log.Println("ERR: Unmarshal /auth, " + err.Error())
 		return
 	}
-
-	hashPassword, err := repository.GetUserPassword(credentials.username)
+	//fmt.Println(r.Body)
+	hashPassword, err := repository.GetUserPassword(credentials.Username)
 		if hashPassword == "" {
 			w.WriteHeader(http.StatusUnprocessableEntity)
 			fmt.Fprintf(w, "User not Found")
 			return
 		}
 		if err != nil {
-			log.Println("Error finding the password for the username, ", credentials.username)
+			log.Println("Error finding the password for the username, ", credentials.Username)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		result := pkg.CompareHash(credentials.password, hashPassword)
+		result := pkg.CompareHash(credentials.Password, hashPassword)
 		if result != nil {
 			log.Println(result)
 			w.WriteHeader(http.StatusUnauthorized)
@@ -101,7 +101,7 @@ func auth(w http.ResponseWriter, r *http.Request){
 		exp := time.Now().Add(1 *time.Hour)
 
 		claims := &claims{
-			username: credentials.username,
+			username: credentials.Username,
 			StandardClaims: jwt.StandardClaims{
 				// In JWT, the expiry time is expressed as unix milliseconds
 				ExpiresAt: exp.Unix(),
@@ -131,12 +131,18 @@ func auth(w http.ResponseWriter, r *http.Request){
 func isAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		tokenString := r.Header.Get("Token")
-		
+		if tokenString == ""{
+			log.Println("No token Found")
+			w.WriteHeader(http.StatusUnauthorized)
+			fmt.Fprintf(w, "No token provided")
+			return
+		}
 		claims := &claims{}
 		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 			return jwtKey, nil
 		})
 		if err != nil {
+			log.Println(err)
 			if err == jwt.ErrSignatureInvalid {
 				w.WriteHeader(http.StatusUnauthorized)
 				return
@@ -148,6 +154,7 @@ func isAuth(next http.Handler) http.Handler {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
+		fmt.Println("hi")
 		next.ServeHTTP(w, r)
 	})
 }

@@ -34,9 +34,7 @@ export default {
 
     },
     methods: {
-        signup: function () {
-
-        }
+        fetch()
     }
 }
 </script>
