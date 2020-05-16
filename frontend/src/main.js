@@ -2,9 +2,9 @@ import Vue from 'vue'
 import App from './App.vue'
 import VueRouter from 'vue-router'
 import hero from './components/hero.vue'
-import register from './components/register.vue'
-
-
+import sign_config from './components/sign_config.vue'
+import register_student from './components/register_student.vue'
+import register_investor from './components/investor_register.vue'
 ``
 Vue.config.productionTip = false
 Vue.use(VueRouter)
@@ -16,9 +16,19 @@ const routes = [
     component: hero,
   } ,
   {
-    path: '/register',
-    name: 'register',
-    component: register,
+    path: '/register_student',
+    name: 'register_student',
+    component: register_student,
+  } ,
+  {
+    path: '/register_investor',
+    name: 'register_investor',
+    component: register_investor,
+  } ,
+  {
+    path: '/sign_config',
+    name: 'sign_config',
+    component: sign_config,
   } ,
 ]
 

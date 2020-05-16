@@ -45,7 +45,7 @@
                                                     <li><a href="elements.html">Element</a></li>
                                                 </ul>
                                             </li>
-                                            <li><a href="/#/register">Sign In</a></li>
+                                            <li><a href="/#/sign_config">Sign In</a></li>
                                         </ul>
                                     </nav>
                                 </div>
@@ -106,5 +106,12 @@ export default {
 <style scoped>
 .header-color {
     background: #010E21;
+}
+.header-transparent {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 9;
 }
 </style>
