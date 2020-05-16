@@ -24,7 +24,7 @@ func main() {
 
 	repository.DB, err = repository.Connect()
 	if err != nil {
-		log.Fatal("Error connecting to the server")
+		log.Fatal("Error connecting to the server,"+err.Error())
 	}
 
 	err = repository.Prepare()

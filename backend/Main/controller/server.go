@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 
 	"github.com/gorilla/mux"
+	"github.com/gorilla/handlers"
 	jwt "github.com/dgrijalva/jwt-go"
 
 	"../pkg"
@@ -59,7 +60,7 @@ func StartServer() error {
 	secure.HandleFunc("/user", getUser).Methods("GET")
 	secure.HandleFunc("/project", createProject).Methods("POST")
 
-	return http.ListenAndServe(Addr, r)
+	return http.ListenAndServe(Addr, handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"*"}))(r))
 }
 
 func auth(w http.ResponseWriter, r *http.Request){
