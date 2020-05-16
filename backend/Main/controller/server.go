@@ -3,13 +3,30 @@ package controller
 import (
 	"fmt"
 	"log"
+	"time"
 	"net/http"
+	"encoding/json"
+	"io/ioutil"
 
 	"github.com/gorilla/mux"
+	jwt "github.com/dgrijalva/jwt-go"
 
 	"../pkg"
 	"../repository"
 )
+
+const jwtKey = []byte(`MIICXAIBAAKBgHTSnN3g0neR4kPUiPRA3Qb6T7zbSh31uvRcKsSR5lF5mprnYr6a
+	Q8VwSyj/gimUZk7z4zeNkl5yyJCmzUxeOAs/Xt+sq4yscqwik1EXwTyZGm0e45MW
+	2/h4PEUFELMAUtqy20HpUKXuKzNZsz20bdTS1pgA+hN33Uib68cYQNmXAgMBAAEC
+	gYBHl6bApv30fve9/+rqXTHXC+F/6Je0YppvFGi1TIBsX+yqj7DJBDsSLW4yMtuu
+	5Z4JNpeBvQX9UbSuSTq5WWhYT5X28EDlimlwu0n/TUC7CrE1JMf6Je7HSB3IfgAw
+	MMRShybWY+kX0etfx0j/1oVHilHrwkkJJU9cJn4wtpYHWQJBALuIBp8T99zFJmdv
+	i1rQ08p97+oawTjx6hPs+m3u3DLv/VObPuigPcKLgBqpWDeEUe0d7aA+jC6RQpkD
+	J3Ibw1sCQQCfeatEXx136FjsX9tJetNsNr94e3IpU2rhLs/T98nU2M7N7SIYx6K1
+	meOVKNdvr2/rBYeHnYrT/HW/vK4GG4N1AkEAtGl7vUTPmwPMG4yTK25lopQf4D+X
+	DjqlsD+2+VXnX9XEB8/96HxojiX4uy2Z4ecZjh3Rwu0Jna8/u8buBvgwqwJAL4kl
+	2wB7GTXh47uC8vkwsi3zjudFFTpvPmYkvus6dz6VDl7j7fz77CPN6bU92mWx950z
+	U+JK8ntrYdbNDLcAzQJBALdfXC7Ef2+mYaB7ioy6kUxcjo4ubRryQCdYRm9s7VOd`)
 
 //Addr used to configure the server
 var Addr string
@@ -24,9 +41,10 @@ func StartServer() error {
 		fmt.Fprintf(w, "hello World ")
 	})
 
-	r.HandleFunc("/addUser", addUser).Methods("POST")
+	r.HandleFunc("/addUser", addUser).Methods("PUT")
 	r.HandleFunc("/getProfessions", getProfessions).Methods("GET")
 	r.HandleFunc("/getProjectCategories", getProjectCategories).Methods("GET")
+	r.HandleFunc("/auth", auth).Methods("POST")
 
 	secure.HandleFunc("/getUser", getUser).Methods("GET")
 	secure.HandleFunc("/createProject", createProject).Methods("POST")
@@ -34,18 +52,25 @@ func StartServer() error {
 	return http.ListenAndServe(Addr, r)
 }
 
-//to authenticate the users
-func isAuth(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		username := r.Header.Get("username")
-		password := r.Header.Get("password")
-		if username == "" || password == "" {
-			fmt.Fprintf(w, "User or Password not given")
-			w.WriteHeader(http.StatusUnprocessableEntity)
-			return
-		}
-		fmt.Println(username, password)
-		hashPassword, err := repository.GetUserPassword(username)
+func auth(w http.ResponseWriter, r *http.Request){
+	var credentials models.Credentials
+	
+	body, err := ioutil.ReadAll(r.Body)
+	//fmt.Println(body)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println("ERR: Reading /auth body, " + err.Error())
+		return
+	}
+
+	err = json.Unmarshal(body, &credentials)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		log.Println("ERR: Unmarshal /auth, " + err.Error())
+		return
+	}
+
+	hashPassword, err := repository.GetUserPassword(credentials.username)
 		if hashPassword == "" {
 			w.WriteHeader(http.StatusUnprocessableEntity)
 			fmt.Fprintf(w, "User not Found")
@@ -56,12 +81,35 @@ func isAuth(next http.Handler) http.Handler {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		result := pkg.CompareHash(password, hashPassword)
+		result := pkg.CompareHash(credentials.password, hashPassword)
 		if result != nil {
 			log.Println(result)
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
+		exp := time.Now().Add(1 *time.Hour)
+
+		claims := jwt.MapClaims{}
+		claims["username"] = credentials.username
+		claims["exp"] = exp.Unix()
+		
+		token := jwt
+
+}
+
+//to authenticate the users
+func isAuth(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		token := r.Header.Get("Token")
+		username := r.Header.Get("username")
+		password := r.Header.Get("password")
+		if username == "" || password == "" {
+			fmt.Fprintf(w, "User or Password not given")
+			w.WriteHeader(http.StatusUnprocessableEntity)
+			return
+		}
+		fmt.Println(username, password)
+		
 
 		next.ServeHTTP(w, r)
 	})
