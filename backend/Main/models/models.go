@@ -73,12 +73,7 @@ type ProjectCategory struct {
 	Name string
 }
 
-//Credentials to keep trak of credentials
-type Credentials struct {
-	username string
-	password string
-}
-// type date struct {
+
 // 	Date  int
 // 	Month int
 // 	Year  int

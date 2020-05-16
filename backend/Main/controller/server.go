@@ -14,8 +14,18 @@ import (
 	"../pkg"
 	"../repository"
 )
+//Credentials to keep track of credentials
+type credentials struct {
+	Username string 
+	Password string
+}
 
-const jwtKey = []byte(`MIICXAIBAAKBgHTSnN3g0neR4kPUiPRA3Qb6T7zbSh31uvRcKsSR5lF5mprnYr6a
+//Claims of the token
+type claims struct {
+	username string 
+	jwt.StandardClaims
+}
+var jwtKey = []byte(`MIICXAIBAAKBgHTSnN3g0neR4kPUiPRA3Qb6T7zbSh31uvRcKsSR5lF5mprnYr6a
 	Q8VwSyj/gimUZk7z4zeNkl5yyJCmzUxeOAs/Xt+sq4yscqwik1EXwTyZGm0e45MW
 	2/h4PEUFELMAUtqy20HpUKXuKzNZsz20bdTS1pgA+hN33Uib68cYQNmXAgMBAAEC
 	gYBHl6bApv30fve9/+rqXTHXC+F/6Je0YppvFGi1TIBsX+yqj7DJBDsSLW4yMtuu
@@ -41,19 +51,19 @@ func StartServer() error {
 		fmt.Fprintf(w, "hello World ")
 	})
 
-	r.HandleFunc("/addUser", addUser).Methods("PUT")
-	r.HandleFunc("/getProfessions", getProfessions).Methods("GET")
-	r.HandleFunc("/getProjectCategories", getProjectCategories).Methods("GET")
-	r.HandleFunc("/auth", auth).Methods("POST")
+	r.HandleFunc("/user", addUser).Methods("PUT")
+	r.HandleFunc("/professions", getProfessions).Methods("GET")
+	r.HandleFunc("/projectCategories", getProjectCategories).Methods("GET")
+	r.HandleFunc("/login", auth).Methods("POST")
 
-	secure.HandleFunc("/getUser", getUser).Methods("GET")
-	secure.HandleFunc("/createProject", createProject).Methods("POST")
+	secure.HandleFunc("/user", getUser).Methods("GET")
+	secure.HandleFunc("/project", createProject).Methods("POST")
 
 	return http.ListenAndServe(Addr, r)
 }
 
 func auth(w http.ResponseWriter, r *http.Request){
-	var credentials models.Credentials
+	var credentials credentials
 	
 	body, err := ioutil.ReadAll(r.Body)
 	//fmt.Println(body)
@@ -69,19 +79,19 @@ func auth(w http.ResponseWriter, r *http.Request){
 		log.Println("ERR: Unmarshal /auth, " + err.Error())
 		return
 	}
-
-	hashPassword, err := repository.GetUserPassword(credentials.username)
+	//fmt.Println(r.Body)
+	hashPassword, err := repository.GetUserPassword(credentials.Username)
 		if hashPassword == "" {
 			w.WriteHeader(http.StatusUnprocessableEntity)
 			fmt.Fprintf(w, "User not Found")
 			return
 		}
 		if err != nil {
-			log.Println("Error finding the password for the username, ", username)
+			log.Println("Error finding the password for the username, ", credentials.Username)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		result := pkg.CompareHash(credentials.password, hashPassword)
+		result := pkg.CompareHash(credentials.Password, hashPassword)
 		if result != nil {
 			log.Println(result)
 			w.WriteHeader(http.StatusUnauthorized)
@@ -89,28 +99,66 @@ func auth(w http.ResponseWriter, r *http.Request){
 		}
 		exp := time.Now().Add(1 *time.Hour)
 
-		claims := jwt.MapClaims{}
-		claims["username"] = credentials.username
-		claims["exp"] = exp.Unix()
+		claims := &claims{
+			username: credentials.Username,
+			StandardClaims: jwt.StandardClaims{
+				// In JWT, the expiry time is expressed as unix milliseconds
+				ExpiresAt: exp.Unix(),
+			},
+		}
+	
 		
-		token := jwt
+		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	
+		tokenString, err := token.SignedString(jwtKey)
+
+		if err != nil {
+			log.Println("Error creating the token, " + err.Error())
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		err = json.NewEncoder(w).Encode(tokenString)
+		if err != nil {
+			log.Println("Error sending the token, " + err.Error())
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 
 }
 
 //to authenticate the users
 func isAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		token := r.Header.Get("Token")
-		username := r.Header.Get("username")
-		password := r.Header.Get("password")
-		if username == "" || password == "" {
-			fmt.Fprintf(w, "User or Password not given")
-			w.WriteHeader(http.StatusUnprocessableEntity)
+		tokenString := r.Header.Get("Token")
+		if tokenString == ""{
+			log.Println("No token Found")
+			w.WriteHeader(http.StatusUnauthorized)
+			fmt.Fprintf(w, "No token provided")
 			return
 		}
-		fmt.Println(username, password)
-		
-
+		claims := &claims{}
+		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+			return jwtKey, nil
+		})
+		if err != nil {
+			log.Println(err)
+			if err == jwt.ErrSignatureInvalid {
+				w.WriteHeader(http.StatusUnauthorized)
+				return
+			}
+			v, _ := err.(*jwt.ValidationError)
+			if v.Errors == jwt.ValidationErrorExpired {
+				w.WriteHeader(http.StatusUnauthorized)
+				return
+			}
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		if !token.Valid {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		fmt.Println("hi")
 		next.ServeHTTP(w, r)
 	})
 }

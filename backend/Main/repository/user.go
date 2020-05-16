@@ -16,7 +16,6 @@ func AddUser(user models.User) (int, error) {
 		user.Lastname,
 		user.Email,
 		user.PhoneNo,
-		user.DateofBirth,
 		user.Description,
 		user.Type,
 	)
@@ -41,8 +40,8 @@ func AddInvestor(investor models.Investor) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-	rowsAffected, errResult := result.RowsAffected()
-	if errResult != nil {
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
 		return 0, err
 	}
 	return rowsAffected, nil
@@ -50,16 +49,16 @@ func AddInvestor(investor models.Investor) (int64, error) {
 
 //AddStudent adds a new Investor
 func AddStudent(student models.Student) (int64, error) {
-	log.Println("Adding a new Student User to the DB")
 	result, err := insertStudentStmt.Exec(
+		student.UserID,
 		student.Profession,
 		student.CV,
 	)
 	if err != nil {
 		return 0, err
 	}
-	rowsAffected, errResult := result.RowsAffected()
-	if errResult != nil {
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
 		return 0, err
 	}
 	return rowsAffected, nil
@@ -93,7 +92,6 @@ func GetUser(username string)(models.User, error){
 		&user.Lastname,
 		&user.Email,
 		&user.PhoneNo,
-		&user.DateofBirth,
 		&user.Description,
 		&user.Type,
 	)

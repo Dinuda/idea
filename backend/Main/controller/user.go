@@ -25,7 +25,7 @@ func addUser(w http.ResponseWriter, r *http.Request) {
 	err = json.Unmarshal(body, &user)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		log.Println("ERR: Unmarshal/addUser, " + err.Error())
+		log.Println("ERR: Unmarshal /addUser, " + err.Error())
 		return
 	}
 	log.Println("hi", user)
@@ -59,8 +59,27 @@ func getProfessions(w http.ResponseWriter, r *http.Request) {
 
 func getUser(w http.ResponseWriter, r *http.Request){
 	log.Println("Getting User Info")
-	username := r.Header.Get("username")
-	user, err := service.GetUser(username)
+	var user models.User
+	body, err := ioutil.ReadAll(r.Body)
+	//fmt.Println(body)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println("ERR: Reading /getUser body, " + err.Error())
+		return
+	}
+
+	err = json.Unmarshal(body, &user)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		log.Println("ERR: Unmarshal /getUser, " + err.Error())
+		return
+	}
+	if user.Username == ""{
+		w.WriteHeader(http.StatusBadRequest)
+		//fmt.Fprintf(w, "No username provided")
+	}
+	log.Println(user.Username)
+	user, err = service.GetUser(user.Username)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
