@@ -42,6 +42,7 @@ func addUser(w http.ResponseWriter, r *http.Request) {
 
 //gets all the professions
 func getProfessions(w http.ResponseWriter, r *http.Request) {
+	setupResponse(&w, r)
 	log.Println("Getting Professions")
 	//var professions []models.Profession
 	//var err error
@@ -67,4 +68,11 @@ func getUser(w http.ResponseWriter, r *http.Request){
 		log.Println("Error responding to /GetUser ", err.Error())
 	}
 
+}
+
+func setupResponse(w *http.ResponseWriter, req *http.Request) {
+	log.Println("setting CORS")
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+    (*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+    (*w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 }
