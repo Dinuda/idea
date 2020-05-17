@@ -18,7 +18,7 @@ func getProjectCategories(w http.ResponseWriter, r *http.Request) {
 	log.Println("Getting Categories")
 	projectCategories, err := service.GetProjectCategories()
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	if err := json.NewEncoder(w).Encode(projectCategories); err != nil {
@@ -34,7 +34,7 @@ func createProject(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		log.Println("Error reading the body of /createProject, " + err.Error())
-		w.WriteHeader(http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		fmt.Fprintf(w, "Error reading the body of /createProject, "+err.Error())
 		return
 	}
@@ -42,7 +42,7 @@ func createProject(w http.ResponseWriter, r *http.Request) {
 	err = json.Unmarshal(body, &project)
 	if err != nil {
 		log.Println("Error unmarshelling /createProject, " + err.Error())
-		w.WriteHeader(http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		fmt.Fprintf(w, "Error unmarshelling /createProject, "+err.Error())
 		return
 	}
@@ -50,7 +50,7 @@ func createProject(w http.ResponseWriter, r *http.Request) {
 	project, err = service.CreateProject(project, username)
 	if err != nil {
 		log.Println("Error creating a new project /createProject, " + err.Error())
-		w.WriteHeader(http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		fmt.Fprintf(w, "Error creating a new project /createProject,"+err.Error())
 		return
 	}
@@ -66,9 +66,38 @@ func addStudentToTeam(w http.ResponseWriter, r *http.Request){
 	err := service.AddStudentToTeam(username, intTeamID)
 	if err != nil {
 		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(w, err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	fmt.Fprintf(w, "Successfully added the student to the team")
+}
+
+func getProjects(w http.ResponseWriter, r *http.Request){
+	log.Println("Getting Projects")
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		log.Println("Error reading the request of /projects, " + err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	var user models.User
+	err = json.Unmarshal(body, &user)
+	if err != nil {
+		log.Println("Error reading the request of /projects, " + err.Error())
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	projects, err := service.GetProjects(user.Username)
+	if err != nil {
+		log.Println("Error getting the Projects, " + err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	err = json.NewEncoder(w).Encode(projects)
+	if err != nil {
+		log.Println("Error sendin the response to /projects, " + err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }

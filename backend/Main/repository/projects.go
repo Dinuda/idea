@@ -45,9 +45,9 @@ func CreateProject(project models.Project) (int, error) {
 	result, err := insertProjectStmt.Exec(
 		project.Title,
 		project.Description,
-		project.CreatedDate,
 		project.Category,
 		project.StudentTeamID,
+		project.HostID,
 	)
 	if err != nil {
 		return 0, fmt.Errorf("Error creating a project, " + err.Error())
@@ -71,4 +71,39 @@ func AddStudentToTeam(teamID int, userID int) (int, error) {
 		return 0, fmt.Errorf("Error while getting the affected rows, " + err.Error())
 	}
 	return int(rowsAffected), nil
+}
+
+//GetProjects Gets all the project of the host
+func GetProjects(hostID int)([]models.Project, error){
+	var projects []models.Project
+	result, err := selectProjectStmt.Query(hostID)
+	if err != nil {
+		return projects, err
+	}
+	
+	for result.Next() {
+		var project models.Project
+		err = result.Scan(
+			&project.ID,
+			&project.Title,
+			&project.Description,
+			&project.CreatedDate,
+			&project.ClosedDate,
+			&project.StudentTeamID,
+			&project.InvestorTeamID,
+			&project.Category,
+			)
+		if err != nil {
+			return projects, err
+		}
+		projects = append(projects, project)
+	}
+
+	return projects, err
+}
+
+
+//GetStudentTeamID returns the studentteamid of that user
+func GetStudentTeamID(hostID int) (int, error){
+	return 0, nil
 }

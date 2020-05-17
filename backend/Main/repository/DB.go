@@ -29,6 +29,8 @@ var (
 	selectInvestorStmt,
 	selectPasswordStmt,
 	selectProjectCatagoriesStmt,
+	selectProjectStmt,
+	selectProjectStudentTeamStmt,
 	selectProfessionsStmt *sql.Stmt
 )
 
@@ -92,18 +94,20 @@ func Prepare() error {
 			description,
 			created_date,
 			category,
-			studentteam_id
+			studentteam_id,
+			host_id
 		)
-		VALUES(?,?,?,?,?)`)
+		VALUES(?,?,NOW(),?,?,?)`)
 	if err != nil {
 		return fmt.Errorf("Error preparing insertProjectStmt, " + err.Error())
 	}
 
 	createStudentTeamStmt, err = DB.Prepare(`INSERT INTO studentteam
-		(
+		(	
+			id,
 			student_id
 		) 
-		VALUES(?)`)
+		VALUES(UNIX_TIMESTAMP(),?)`)
 	if err != nil {
 		return fmt.Errorf("Error preparing createStudentTeamStmt, " + err.Error())
 	}
@@ -155,6 +159,24 @@ func Prepare() error {
 	selectProjectCatagoriesStmt, err = DB.Prepare(`SELECT * FROM categories`)
 	if err != nil {
 		return fmt.Errorf("Error preparing selectProjectCategoryStmt, " + err.Error())
+	}
+
+	selectProjectStmt, err = DB.Prepare(`SELECT 
+		title, 
+		description, 
+		created_date, 
+		closed_date, 
+		studentteam_id,
+		investorteam_id,
+		category
+	FROM projects WHERE host_id=?`)
+	if err != nil {
+		return fmt.Errorf("Error preparing selectProjectStmt, " + err.Error())
+	}
+
+	selectProjectStudentTeamStmt, err = DB.Prepare(`SELECT studentteam_id FROM projects WHERE id=? AND host_id=?`)
+	if err != nil {
+		return fmt.Errorf("Error preparing selectProjectStudentTeamStmt, " + err.Error())
 	}
 
 	selectPasswordStmt, err = DB.Prepare(`SELECT password FROM users WHERE username = ?`)

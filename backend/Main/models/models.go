@@ -44,6 +44,7 @@ type Project struct {
 	ClosedDate     string
 	InvestorTeamID int
 	StudentTeamID  int  // Team id is used to get the info
+	HostID int
 	Category       int //Agriculture, IT,
 }
 
