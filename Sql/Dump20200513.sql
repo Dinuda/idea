@@ -1,5 +1,6 @@
 CREATE DATABASE  IF NOT EXISTS `idea` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */;
 USE `idea`;
+SET FOREIGN_KEY_CHECKS = 0;
 -- MySQL dump 10.13  Distrib 8.0.12, for Win64 (x86_64)
 --
 -- Host: localhost    Database: idea
@@ -16,6 +17,68 @@ USE `idea`;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+DROP TABLE IF EXISTS `professions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `professions` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=243 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `professions`
+--
+
+LOCK TABLES `professions` WRITE;
+/*!40000 ALTER TABLE `professions` DISABLE KEYS */;
+INSERT INTO `professions` VALUES (1,'Software Engineer'),(2,'Mobile Developer'),(3,'Frontend Engineer'),(4,'Backend Engineer'),(5,'Full-Stack Engineer'),(6,'Engineering Manager'),(7,'QA Engineer'),(8,'DevOps'),(9,'Software Architect'),(10,'Embedded Engineer'),(11,'Data Engineer'),(12,'Designer'),(13,'UI/UX Designer'),(14,'User Researcher'),(15,'Visual Designer'),(16,'Creative Director'),(17,'Operations'),(18,'Finance/Accounting'),(19,'H.R.'),(20,'Office Manager'),(21,'Recruiter'),(22,'Customer Service'),(23,'Operations Manager'),(24,'Sales'),(25,'Business Development'),(26,'Sales Development Representative'),(27,'Account Executive'),(28,'BD Manager'),(29,'Account Manager'),(30,'Sales Manager'),(31,'Marketing'),(32,'Growth Hacker'),(33,'Marketing Manager'),(34,'Content Creator'),(35,'CEO'),(36,'CFO'),(37,'CMO'),(38,'COO'),(39,'CTO'),(40,'Hardware Engineer'),(41,'Mechanical Engineer'),(42,'Systems Engineer'),(43,'Business Analyst'),(44,'Data Scientist'),(45,'Product Manager'),(46,'Project Manager'),(47,'Attorney');
+/*!40000 ALTER TABLE `professions` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `firstname` varchar(255) NOT NULL,
+  `lastname` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `phone_no` varchar(255) NOT NULL,
+  `description` text,
+  `type` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`),
+  UNIQUE KEY `email` (`email`),
+  UNIQUE KEY `phone_no` (`phone_no`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users`
+--
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2020-05-13 12:50:18
 
 --
 -- Table structure for table `categories`
@@ -106,26 +169,6 @@ UNLOCK TABLES;
 -- Table structure for table `professions`
 --
 
-DROP TABLE IF EXISTS `professions`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
-CREATE TABLE `professions` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=243 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `professions`
---
-
-LOCK TABLES `professions` WRITE;
-/*!40000 ALTER TABLE `professions` DISABLE KEYS */;
-INSERT INTO `professions` VALUES (1,'Software Engineer'),(2,'Mobile Developer'),(3,'Frontend Engineer'),(4,'Backend Engineer'),(5,'Full-Stack Engineer'),(6,'Engineering Manager'),(7,'QA Engineer'),(8,'DevOps'),(9,'Software Architect'),(10,'Embedded Engineer'),(11,'Data Engineer'),(12,'Designer'),(13,'UI/UX Designer'),(14,'User Researcher'),(15,'Visual Designer'),(16,'Creative Director'),(17,'Operations'),(18,'Finance/Accounting'),(19,'H.R.'),(20,'Office Manager'),(21,'Recruiter'),(22,'Customer Service'),(23,'Operations Manager'),(24,'Sales'),(25,'Business Development'),(26,'Sales Development Representative'),(27,'Account Executive'),(28,'BD Manager'),(29,'Account Manager'),(30,'Sales Manager'),(31,'Marketing'),(32,'Growth Hacker'),(33,'Marketing Manager'),(34,'Content Creator'),(35,'CEO'),(36,'CFO'),(37,'CMO'),(38,'COO'),(39,'CTO'),(40,'Hardware Engineer'),(41,'Mechanical Engineer'),(42,'Systems Engineer'),(43,'Business Analyst'),(44,'Data Scientist'),(45,'Product Manager'),(46,'Project Manager'),(47,'Attorney');
-/*!40000 ALTER TABLE `professions` ENABLE KEYS */;
-UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `studentteam`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -222,48 +265,10 @@ LOCK TABLES `students` WRITE;
 /*!40000 ALTER TABLE `students` DISABLE KEYS */;
 /*!40000 ALTER TABLE `students` ENABLE KEYS */;
 UNLOCK TABLES;
+SET FOREIGN_KEY_CHECKS = 1;
 
 --
 -- Table structure for table `studentteam`
 --
 
 
-DROP TABLE IF EXISTS `users`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
-CREATE TABLE `users` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `username` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `firstname` varchar(255) NOT NULL,
-  `lastname` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `phone_no` varchar(255) NOT NULL,
-  `description` text,
-  `type` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id` (`id`),
-  UNIQUE KEY `email` (`email`),
-  UNIQUE KEY `phone_no` (`phone_no`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `users`
---
-
-LOCK TABLES `users` WRITE;
-/*!40000 ALTER TABLE `users` DISABLE KEYS */;
-/*!40000 ALTER TABLE `users` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2020-05-13 12:50:18
