@@ -26,32 +26,31 @@ func CreateProject(project models.Project, username string) (models.Project, err
 		return models.Project{}, fmt.Errorf("Error getting the user id, " + err.Error())
 	}
 
-	var lastInsertID , rowsAffected int
-	lastInsertID, err = repository.CreateStudentTeam(userID)
-	if err != nil {
-		log.Println("Error creating a studentteam," + err.Error())
-		return models.Project{}, fmt.Errorf("Error creating a studentteam, " + err.Error())
-	}
-	project.StudentTeamID = lastInsertID
 	project.HostID = userID
-
-	rowsAffected, err = repository.CreateProject(project)
-	if err != nil || rowsAffected < 1{
+	var lastInsertID int
+	lastInsertID, err = repository.CreateProject(project)
+	if err != nil{
 		log.Println("Error creating a project, " + err.Error())
 		return models.Project{}, fmt.Errorf("Error creating a project, " + err.Error())
+	}
+
+	err = repository.CreateProjectStudentTeam(lastInsertID, userID)
+	if err != nil {
+		log.Println("Error creating a projectstudentteam," + err.Error())
+		return models.Project{}, fmt.Errorf("Error creating a studentteam, " + err.Error())
 	}
 	return project, nil
 
 }
 
-//AddStudentToTeam adds a new student to the studentteam of the project
-func AddStudentToTeam(username string, teamID int) (error){
+//AddStudentToProjectStudentTeam adds a new student to the studentteam of the project
+func AddStudentToProjectStudentTeam(username string, projectID int) (error){
 	userID, err := repository.GetUserID(username)
 	if err != nil {
 		log.Println("Error getting the user id, " + err.Error())
 		return fmt.Errorf("Error getting the user id, " + err.Error())
 	}
-	rowsAffected, err := repository.AddStudentToTeam(teamID, userID)
+	rowsAffected, err := repository.AddStudentToProjectStudentTeam(projectID, userID)
 	if err != nil || rowsAffected  < 1{
 		return err
 	}
@@ -60,12 +59,7 @@ func AddStudentToTeam(username string, teamID int) (error){
 
 //GetProjects gets all the project of the student
 func GetProjects(username string)([]models.Project, error){
-	userID, err := repository.GetUserID(username)
-	if err != nil {
-		log.Println("Error getting the user id, " + err.Error())
-		return []models.Project{}, fmt.Errorf("Error getting the user id, " + err.Error())
-	}
-	projects, err := repository.GetProjects(userID)
+	projects, err := repository.GetProjects(username)
 	if err != nil{
 		log.Println("Error getting projects, " + err.Error())
 		return projects, err

@@ -61,9 +61,9 @@ func createProject(w http.ResponseWriter, r *http.Request) {
 func addStudentToTeam(w http.ResponseWriter, r *http.Request){
 	log.Println("Adding a student to a team")
 	username := r.Header.Get("username")
-	teamID := mux.Vars(r)["teamID"]
-	intTeamID, _ := strconv.Atoi(teamID)
-	err := service.AddStudentToTeam(username, intTeamID)
+	projectID := mux.Vars(r)["projectID"]
+	intProjectID, _ := strconv.Atoi(projectID)
+	err := service.AddStudentToProjectStudentTeam(username, intProjectID)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

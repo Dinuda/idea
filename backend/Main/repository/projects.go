@@ -26,18 +26,13 @@ func GetProjectCategories() ([]models.ProjectCategory, error) {
 	return projectCategories, nil
 }
 
-//CreateStudentTeam creates a new student team
-func CreateStudentTeam(userID int) (int, error) {
-	result, err := createStudentTeamStmt.Exec(userID)
+//CreateProjectStudentTeam creates a new student team for the projects
+func CreateProjectStudentTeam(projectID int, userID int) (error) {
+	_, err := createProjectStudentTeamStmt.Exec(projectID, userID)
 	if err != nil {
-		return 0, fmt.Errorf("Error inserting a student to the student team, " + err.Error())
+		return fmt.Errorf("Error creating projectstudentteam, " + err.Error())
 	}
-	var lastInsertID int64
-	lastInsertID, err = result.LastInsertId()
-	if err != nil {
-		return 0, fmt.Errorf("Error getting the last insert ID, " + err.Error())
-	}
-	return int(lastInsertID), nil
+	return  nil
 }
 
 //CreateProject creates a new Project
@@ -46,23 +41,22 @@ func CreateProject(project models.Project) (int, error) {
 		project.Title,
 		project.Description,
 		project.Category,
-		project.StudentTeamID,
 		project.HostID,
 	)
 	if err != nil {
 		return 0, fmt.Errorf("Error creating a project, " + err.Error())
 	}
-	var rowsAffected int64
-	rowsAffected, err = result.RowsAffected()
+	var lastInsertID int64
+	lastInsertID, err = result.LastInsertId()
 	if err != nil {
-		return 0, fmt.Errorf("Error getting no of rows Affected," + err.Error())
+		return 0, fmt.Errorf("Error getting no of LastInesrtID," + err.Error())
 	}
-	return int(rowsAffected), nil
+	return int(lastInsertID), nil
 }
 
-//AddStudentToTeam adds a new student to the studentteam of the project
-func AddStudentToTeam(teamID int, userID int) (int, error) {
-	result, err := insertStudentToTeamStmt.Exec(teamID, userID)
+//AddStudentToProjectStudentTeam adds a new student to the studentteam of the project
+func AddStudentToProjectStudentTeam(teamID int, userID int) (int, error) {
+	result, err := insertStudentToProjectStudentTeamStmt.Exec(teamID, userID)
 	if err != nil {
 		return 0, fmt.Errorf("Error while adding student to the team, " + err.Error())
 	}
@@ -74,9 +68,9 @@ func AddStudentToTeam(teamID int, userID int) (int, error) {
 }
 
 //GetProjects Gets all the project of the host
-func GetProjects(hostID int)([]models.Project, error){
+func GetProjects(username string)([]models.Project, error){
 	var projects []models.Project
-	result, err := selectProjectStmt.Query(hostID)
+	result, err := selectProjectStmt.Query(username)
 	if err != nil {
 		return projects, err
 	}
@@ -88,9 +82,6 @@ func GetProjects(hostID int)([]models.Project, error){
 			&project.Title,
 			&project.Description,
 			&project.CreatedDate,
-			&project.ClosedDate,
-			&project.StudentTeamID,
-			&project.InvestorTeamID,
 			&project.Category,
 			)
 		if err != nil {

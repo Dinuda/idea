@@ -1,5 +1,6 @@
 CREATE DATABASE  IF NOT EXISTS `idea` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */;
 USE `idea`;
+SET FOREIGN_KEY_CHECKS = 0;
 -- MySQL dump 10.13  Distrib 8.0.12, for Win64 (x86_64)
 --
 -- Host: localhost    Database: idea
@@ -30,7 +31,7 @@ CREATE TABLE `categories` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   UNIQUE KEY `name_UNIQUE` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -44,7 +45,7 @@ INSERT INTO `categories` VALUES (1,'Advertising and Pr'),(2,'Agri Tech'),(3,'Agr
 UNLOCK TABLES;
 
 --
--- Table structure for table `investorteam`
+-- Table structure for table `investors`
 --
 
 DROP TABLE IF EXISTS `investorteam`;
@@ -55,8 +56,37 @@ CREATE TABLE `investorteam` (
   `investor_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `investor_id` (`investor_id`),
-  CONSTRAINT `investorteam_fk0` FOREIGN KEY (`investor_id`) REFERENCES `investors` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `investorteam_fk0` FOREIGN KEY (`investor_id`) REFERENCES `investors` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+DROP TABLE IF EXISTS `investors`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `investors` (
+  `user_id` int(11) NOT NULL,
+  `linkedin` varchar(255) NOT NULL,
+  `company` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`user_id`),
+  UNIQUE KEY `linkedin` (`linkedin`),
+  KEY `investors_fk0` (`user_id`),
+  CONSTRAINT `investors_fk0` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `investors`
+--
+
+LOCK TABLES `investors` WRITE;
+/*!40000 ALTER TABLE `investors` DISABLE KEYS */;
+/*!40000 ALTER TABLE `investors` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `investorteam`
+--
+
+
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -80,7 +110,7 @@ CREATE TABLE `professions` (
   `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=243 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -91,6 +121,43 @@ LOCK TABLES `professions` WRITE;
 /*!40000 ALTER TABLE `professions` DISABLE KEYS */;
 INSERT INTO `professions` VALUES (1,'Software Engineer'),(2,'Mobile Developer'),(3,'Frontend Engineer'),(4,'Backend Engineer'),(5,'Full-Stack Engineer'),(6,'Engineering Manager'),(7,'QA Engineer'),(8,'DevOps'),(9,'Software Architect'),(10,'Embedded Engineer'),(11,'Data Engineer'),(12,'Designer'),(13,'UI/UX Designer'),(14,'User Researcher'),(15,'Visual Designer'),(16,'Creative Director'),(17,'Operations'),(18,'Finance/Accounting'),(19,'H.R.'),(20,'Office Manager'),(21,'Recruiter'),(22,'Customer Service'),(23,'Operations Manager'),(24,'Sales'),(25,'Business Development'),(26,'Sales Development Representative'),(27,'Account Executive'),(28,'BD Manager'),(29,'Account Manager'),(30,'Sales Manager'),(31,'Marketing'),(32,'Growth Hacker'),(33,'Marketing Manager'),(34,'Content Creator'),(35,'CEO'),(36,'CFO'),(37,'CMO'),(38,'COO'),(39,'CTO'),(40,'Hardware Engineer'),(41,'Mechanical Engineer'),(42,'Systems Engineer'),(43,'Business Analyst'),(44,'Data Scientist'),(45,'Product Manager'),(46,'Project Manager'),(47,'Attorney');
 /*!40000 ALTER TABLE `professions` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `projects`
+--
+
+DROP TABLE IF EXISTS `projects`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `projects` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) NOT NULL,
+  `description` text NOT NULL,
+  `created_date` date NOT NULL,
+  `closed_date` date DEFAULT NULL,
+  `investorteam_id` int(40) DEFAULT NULL,
+  `studentteam_id` int(40) DEFAULT NULL,
+  `category` varchar(45) DEFAULT NULL,
+  `host_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`),
+  UNIQUE KEY `investorteam_id` (`investorteam_id`),
+  UNIQUE KEY `studentteam_id_UNIQUE` (`studentteam_id`),
+  KEY `projects_fk2_idx` (`category`),
+  CONSTRAINT `projects_fk0` FOREIGN KEY (`investorteam_id`) REFERENCES `investorteam` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `projects_fk1` FOREIGN KEY (`studentteam_id`) REFERENCES `studentteam` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `projects_fk2` FOREIGN KEY (`category`) REFERENCES `category` (`name`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `projects`
+--
+
+LOCK TABLES `projects` WRITE;
+/*!40000 ALTER TABLE `projects` DISABLE KEYS */;
+/*!40000 ALTER TABLE `projects` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -106,13 +173,12 @@ CREATE TABLE `students` (
   `cv` varchar(255) NOT NULL,
   `team_role` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`user_id`),
-  UNIQUE KEY `id` (`id`),
   UNIQUE KEY `cv` (`cv`),
   KEY `students_fk0` (`user_id`),
   KEY `students_fk2` (`profession`),
   CONSTRAINT `students_fk0` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `students_fk2` FOREIGN KEY (`profession`) REFERENCES `professions` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -121,7 +187,6 @@ CREATE TABLE `students` (
 
 LOCK TABLES `students` WRITE;
 /*!40000 ALTER TABLE `students` DISABLE KEYS */;
-INSERT INTO `students` VALUES (1,7,34,'https://test.test.com',NULL);
 /*!40000 ALTER TABLE `students` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -133,7 +198,7 @@ DROP TABLE IF EXISTS `studentteam`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `studentteam` (
-  `id` char(40) NOT NULL,
+  `id` int(40) NOT NULL,
   `student_id` int(11) NOT NULL,
   `title` text,
   PRIMARY KEY (`id`),
@@ -172,7 +237,7 @@ CREATE TABLE `users` (
   UNIQUE KEY `id` (`id`),
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `phone_no` (`phone_no`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -181,7 +246,6 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (7,'test','$2a$10$fREKV.BSPlQWH4sOltFhsuku9L7g7YuVj4AVGmF3AUxsL.E5Z0SIS','test','test','test@test.com','9400000000','Example Description Example Description Example Description Example DescriptionExample Description Example DescriptionExample Description Example DescriptionExample Description Example DescriptionExample Description Example DescriptionExample Description Example DescriptionExample Description Example DescriptionExample Description Example DescriptionExample Description Example DescriptionExample Description Example Descriptio','Student');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -193,5 +257,5 @@ UNLOCK TABLES;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2020-05-17 13:47:59
+SET FOREIGN_KEY_CHECKS = 1;
+-- Dump completed on 2020-05-17 11:37:52
