@@ -177,9 +177,9 @@ func Prepare() error {
 
 	selectProjectIDStmt, err = DB.Prepare(`SELECT 
 		projects.id, 
-		project.host
+		projects.host,
 		users.id 
-		FROM users INNER JOIN projects on users.id=projects.host WHERE users.username=?`)
+		FROM users INNER JOIN projects ON users.id=projects.host WHERE users.username=?`)
 	if err != nil {
 		return fmt.Errorf("Error preparing selectProjectIDStmt, " + err.Error())
 	}
