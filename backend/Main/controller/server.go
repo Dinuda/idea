@@ -10,6 +10,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/handlers"
+	"github.com/gorilla/context"
 	jwt "github.com/dgrijalva/jwt-go"
 
 	"../pkg"
@@ -60,6 +61,7 @@ func StartServer() error {
 	secure.HandleFunc("/user", getUser).Methods("GET")
 	secure.HandleFunc("/project", createProject).Methods("PUT")
 	secure.HandleFunc("/project", getProjects).Methods("GET")
+	secure.HandleFunc("/invitationProjectStudentTeam", genarateInvitationLink).Methods("GET")
 
 	return http.ListenAndServe(Addr, handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"*"}))(r))
 }
@@ -118,11 +120,7 @@ func auth(w http.ResponseWriter, r *http.Request){
 			return
 		}
 
-		err = json.NewEncoder(w).Encode(tokenString)
-		if err != nil {
-			log.Println("Error sending the token, " + err.Error())
-			http.Error(w, "Error sending the token, " + err.Error(), http.StatusInternalServerError)
-		}
+		w.Write([]byte(token))
 
 }
 
@@ -157,6 +155,7 @@ func isAuth(next http.Handler) http.Handler {
 			http.Error(w, "Token is not valid", http.StatusUnauthorized)
 			return
 		}
+		context.Set(r, "username", claims.Username)
 		next.ServeHTTP(w, r)
 	})
 }

@@ -41,7 +41,7 @@ func CreateProject(project models.Project) (int, error) {
 		project.Title,
 		project.Description,
 		project.Category,
-		project.HostID,
+		project.Host,
 	)
 	if err != nil {
 		return 0, fmt.Errorf("Error creating a project, " + err.Error())
@@ -49,7 +49,7 @@ func CreateProject(project models.Project) (int, error) {
 	var lastInsertID int64
 	lastInsertID, err = result.LastInsertId()
 	if err != nil {
-		return 0, fmt.Errorf("Error getting no of LastInesrtID," + err.Error())
+		return 0, fmt.Errorf("Error getting no of LastInsertID," + err.Error())
 	}
 	return int(lastInsertID), nil
 }
@@ -83,6 +83,7 @@ func GetProjects(username string)([]models.Project, error){
 			&project.Description,
 			&project.CreatedDate,
 			&project.Category,
+			&project.Host,
 			)
 		if err != nil {
 			return projects, err
@@ -97,4 +98,25 @@ func GetProjects(username string)([]models.Project, error){
 //GetStudentTeamID returns the studentteamid of that user
 func GetStudentTeamID(hostID int) (int, error){
 	return 0, nil
+}
+
+//GetProjectID get all the professions from the db
+func GetProjectID(username string) ([]models.Project, error) {
+	var projects []models.Project
+	result, err := selectProjectIDStmt.Query(username)
+	if err != nil {
+		return projects, err
+	}
+	
+	for result.Next() {
+		var project models.Project
+		var userID int
+		err = result.Scan(&project.ID, &project.Host, &userID)
+		if err != nil {
+			return []models.Project{}, err
+		}
+		projects = append(projects, project)
+	}
+
+	return projects, err
 }

@@ -31,6 +31,7 @@ var (
 	selectPasswordStmt,
 	selectProjectCatagoriesStmt,
 	selectProjectStmt,
+	selectProjectIDStmt,
 	selectProjectStudentTeamStmt,
 	selectProfessionsStmt *sql.Stmt
 )
@@ -55,14 +56,13 @@ func Prepare() error {
 		(
 			username, 
 			password, 
-			firstname, 
-			lastname, 
+			name,
 			email, 
 			phone_no, 
 			description, 
 			type
 		) 
-		VALUES(?,?,?,?,?,?,?,?)`)
+		VALUES(?,?,?,?,?,?,?)`)
 	if err != nil {
 		return fmt.Errorf("Error preparing insertUserStmt, " + err.Error())
 	}
@@ -133,8 +133,7 @@ func Prepare() error {
 	}
 
 	selectUserStmt, err = DB.Prepare(`SELECT
-		firstname, 
-		lastname, 
+		name,
 		email, 
 		phone_no, 
 		description, 
@@ -165,16 +164,25 @@ func Prepare() error {
 	}
 
 	selectProjectStmt, err = DB.Prepare(`SELECT 
-	users.id, 
-	projects.title, 
-	projects.description, 
-	projects.created_at, 
-	projects.category 
-	FROM users INNER JOIN projects ON users.id=projects.host WHERE users.username=?  `)
+		projects.id,
+		projects.title, 
+		projects.description, 
+		projects.created_at, 
+		projects.category,
+		users.id
+		FROM users INNER JOIN projects ON users.id=projects.host WHERE users.username=?  `)
 	if err != nil {
 		return fmt.Errorf("Error preparing selectProjectStmt, " + err.Error())
 	}
 
+	selectProjectIDStmt, err = DB.Prepare(`SELECT 
+		projects.id, 
+		project.host
+		users.id 
+		FROM users INNER JOIN projects on users.id=projects.host WHERE users.username=?`)
+	if err != nil {
+		return fmt.Errorf("Error preparing selectProjectIDStmt, " + err.Error())
+	}
 	// selectProjectStudentTeamStmt, err = DB.Prepare(`SELECT user_id FROM projectstudentteam INNER JOIN projects USING()`)
 	// if err != nil {
 	// 	return fmt.Errorf("Error preparing selectProjectStudentTeamStmt, " + err.Error())

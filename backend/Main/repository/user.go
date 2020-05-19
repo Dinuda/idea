@@ -12,8 +12,7 @@ func AddUser(user models.User) (int, error) {
 	result, err := insertUserStmt.Exec(
 		user.Username,
 		user.Password,
-		user.Firstname,
-		user.Lastname,
+		user.Name,
 		user.Email,
 		user.PhoneNo,
 		user.Description,
@@ -88,8 +87,7 @@ func GetProfessions() ([]models.Profession, error) {
 func GetUser(username string)(models.User, error){
 	var user models.User
 	err := selectUserStmt.QueryRow(username).Scan(
-		&user.Firstname,
-		&user.Lastname,
+		&user.Name,
 		&user.Email,
 		&user.PhoneNo,
 		&user.Description,

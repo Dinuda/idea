@@ -1,10 +1,13 @@
 package controller
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"encoding/json"
 	"io/ioutil"
+
+	"github.com/gorilla/context"
 
 	"../models"
 	"../service"
@@ -58,32 +61,15 @@ func getProfessions(w http.ResponseWriter, r *http.Request) {
 
 func getUser(w http.ResponseWriter, r *http.Request){
 	log.Println("Getting User Info")
-	var user models.User
-	body, err := ioutil.ReadAll(r.Body)
-	//fmt.Println(body)
+	username := context.Get(r, "username").(string)
+	user, err := service.GetUser(username)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		log.Println("ERR: Reading /getUser body, " + err.Error())
-		return
+		log.Println("Error getting the user, " + err.Error())
+		http.Error(w, "Error getting the user, " + err.Error(), http.StatusInternalServerError)
 	}
-
-	err = json.Unmarshal(body, &user)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		log.Println("ERR: Unmarshal /getUser, " + err.Error())
-		return
-	}
-	if user.Username == ""{
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		//fmt.Fprintf(w, "No username provided")
-	}
-	log.Println(user.Username)
-	user, err = service.GetUser(user.Username)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-	if err := json.NewEncoder(w).Encode(user); err != nil {
+	if err = json.NewEncoder(w).Encode(user); err != nil {
 		log.Println("Error responding to /GetUser ", err.Error())
+		http.Error(w, "Error responding to /GetUser ", err.Error(), http.StatusInternalServerError)
 	}
 
 }

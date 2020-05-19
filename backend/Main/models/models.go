@@ -2,18 +2,16 @@ package models
 
 //User new User
 type User struct {
-	Username    string    
-	Password    string    
-	Firstname   string   
-	Lastname    string   
-	PhoneNo     int      
-	Address     string   
-	Email       string   
-	DateofBirth string   
-	Description string   
-	Type        string    
-	Investor    Investor  
-	Student     Student   
+	Username    string
+	Password    string
+	Name        string
+	PhoneNo     int
+	Address     string
+	Email       string
+	Description string
+	Type        string
+	Investor    Investor
+	Student     Student
 }
 
 //Student  new Student
@@ -37,15 +35,13 @@ type Investor struct {
 
 //Project new host of project
 type Project struct {
-	ID             int
-	Title          string
-	Description    string
-	CreatedDate    string
-	ClosedDate     string
-	InvestorTeamID int
-	StudentTeamID  int  // Team id is used to get the info
-	HostID int
-	Category       int //Agriculture, IT,
+	ID          int
+	Title       string
+	Description string
+	CreatedDate string
+	ClosedDate  string
+	Category    int //Agriculture, IT,
+	Host      int
 }
 
 //StudentTeam is used to make a team by students
@@ -73,7 +69,6 @@ type ProjectCategory struct {
 	ID   int
 	Name string
 }
-
 
 // 	Date  int
 // 	Month int

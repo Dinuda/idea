@@ -3,10 +3,20 @@ package service
 import (
 	"fmt"
 	"log"
+	"time"
+
+	jwt "github.com/dgrijalva/jwt-go"
 
 	"../models"
 	"../repository"
 )
+
+type claims struct {
+	ProjectID int 
+	jwt.StandardClaims
+}
+
+var jwtKey = []byte(`gIQhHG6cxsMuyoR92KWvPmzUwd501BjY8fAZltJbE7aSeD4TXiNOCLVpnkrq3F`)
 
 //GetProjectCategories gets all the Categories roles
 func GetProjectCategories() ([]models.ProjectCategory, error) {
@@ -26,7 +36,7 @@ func CreateProject(project models.Project, username string) (models.Project, err
 		return models.Project{}, fmt.Errorf("Error getting the user id, " + err.Error())
 	}
 
-	project.HostID = userID
+	project.Host = userID
 	var lastInsertID int
 	lastInsertID, err = repository.CreateProject(project)
 	if err != nil{
@@ -66,3 +76,27 @@ func GetProjects(username string)([]models.Project, error){
 	}
 	return projects, nil
 }
+
+//GenarateProjectInvitationCode created a encrypted code to enable invitation code for the user
+func GenarateProjectInvitationCode(projectID int)(string, error){
+	exp := time.Now().Add(48 *time.Hour)
+		claims := &claims{
+			ProjectID: projectID,
+			StandardClaims: jwt.StandardClaims{
+				// In JWT, the expiry time is expressed as unix milliseconds
+				ExpiresAt: exp.Unix(),
+			},
+		}
+	
+		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	
+		tokenString, err := token.SignedString(jwtKey)
+
+		if err != nil {
+			log.Println("Error creating the token, " + err.Error())
+			//http.Error(w, "Error creating the token, " + err.Error(), http.StatusInternalServerError)
+			return "", fmt.Errorf("Error creating the token, " + err.Error())
+		}
+		return tokenString, nil
+}
+

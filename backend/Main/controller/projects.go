@@ -2,6 +2,8 @@ package controller
 
 import (
 	"github.com/gorilla/mux"
+	"github.com/gorilla/context"
+
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -30,7 +32,7 @@ func getProjectCategories(w http.ResponseWriter, r *http.Request) {
 func createProject(w http.ResponseWriter, r *http.Request) {
 	log.Println("Creating a new Project")
 	var project models.Project
-	username := r.Header.Get("username")
+	username := context.Get(r, "username").(string)
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		log.Println("Error reading the body of /createProject, " + err.Error())
@@ -54,13 +56,17 @@ func createProject(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Error creating a new project /createProject,"+err.Error())
 		return
 	}
-	json.NewEncoder(w).Encode(project)
+	err = json.NewEncoder(w).Encode(project)
+	if err != nil {
+		log.Println("Error sending the token, " + err.Error())
+		http.Error(w, "Error sending the token, " + err.Error(), http.StatusInternalServerError)
+	}
 }
 
 
 func addStudentToTeam(w http.ResponseWriter, r *http.Request){
 	log.Println("Adding a student to a team")
-	username := r.Header.Get("username")
+	username := context.Get(r, "username").(string)
 	projectID := mux.Vars(r)["projectID"]
 	intProjectID, _ := strconv.Atoi(projectID)
 	err := service.AddStudentToProjectStudentTeam(username, intProjectID)
@@ -74,30 +80,36 @@ func addStudentToTeam(w http.ResponseWriter, r *http.Request){
 
 func getProjects(w http.ResponseWriter, r *http.Request){
 	log.Println("Getting Projects")
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		log.Println("Error reading the request of /projects, " + err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	username := context.Get(r, "username").(string)
 
-	var user models.User
-	err = json.Unmarshal(body, &user)
-	if err != nil {
-		log.Println("Error reading the request of /projects, " + err.Error())
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	projects, err := service.GetProjects(user.Username)
+	projects, err := service.GetProjects(username)
 	if err != nil {
 		log.Println("Error getting the Projects, " + err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	err = json.NewEncoder(w).Encode(projects)
 	if err != nil {
 		log.Println("Error sendin the response to /projects, " + err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+}
+
+func genarateInvitationLink(w http.ResponseWriter, r *http.Request){
+	log.Println("Genarating Invitation link")
+	projectID := r.Header.Get("projectID")
+	if projectID == ""{
+		log.Println("Error no username or the projectID given")
+		http.Error(w, "Error no username or the projectID given", http.StatusBadRequest)
+		return
+	}
+	intProjectID, _ := strconv.Atoi(projectID)
+	token, err := service.GenarateProjectInvitationCode(intProjectID)
+	if err != nil {
+		log.Println("Error Genarating the code" + err.Error())
+		http.Error(w, "Error Genarating the code" + err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Write([]byte(token))
 }
