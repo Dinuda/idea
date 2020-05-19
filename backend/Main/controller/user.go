@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"context"
 	"log"
 	"net/http"
 	"encoding/json"
@@ -69,7 +68,7 @@ func getUser(w http.ResponseWriter, r *http.Request){
 	}
 	if err = json.NewEncoder(w).Encode(user); err != nil {
 		log.Println("Error responding to /GetUser ", err.Error())
-		http.Error(w, "Error responding to /GetUser ", err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Error responding to /GetUser " + err.Error(), http.StatusInternalServerError)
 	}
 
 }

@@ -120,7 +120,7 @@ func auth(w http.ResponseWriter, r *http.Request){
 			return
 		}
 
-		w.Write([]byte(token))
+		w.Write([]byte(tokenString))
 
 }
 
