@@ -7,21 +7,24 @@ import (
 )
 
 //GetProjectCategories get all the category from the db
-func GetProjectCategories() ([]models.ProjectCategory, error) {
+func GetProjectCategories() (map[int]string, error) {
+	projectCategories := make(map[int]string)
 	result, err := selectProjectCatagoriesStmt.Query()
 	if err != nil {
 
-		return []models.ProjectCategory{}, fmt.Errorf("Error getting ProjectCategories, " + err.Error())
+		return projectCategories, fmt.Errorf("Error getting ProjectCategories, " + err.Error())
 	}
-	var projectCategories []models.ProjectCategory
+	
 	for result.Next() {
-		var projectCategory models.ProjectCategory
-		err = result.Scan(&projectCategory.ID, &projectCategory.Name)
+		var projectCategory string
+		var projectCategoryID int
+		err = result.Scan(&projectCategoryID, &projectCategory)
 		if err != nil {
-			return []models.ProjectCategory{}, fmt.Errorf("Error getting ProjectCategories, " + err.Error())
+			return projectCategories, fmt.Errorf("Error getting ProjectCategories, " + err.Error())
 		}
-		projectCategories = append(projectCategories, projectCategory)
+		projectCategories[projectCategoryID] = projectCategory
 	}
+	//fmt.Println(projectCategories)
 
 	return projectCategories, nil
 }

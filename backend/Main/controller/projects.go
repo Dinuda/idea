@@ -19,7 +19,7 @@ import (
 func getProjectCategories(w http.ResponseWriter, r *http.Request) {
 	log.Println("Getting Categories")
 	projectCategories, err := service.GetProjectCategories()
-	if err != nil {
+	if err != nil || projectCategories == nil{
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

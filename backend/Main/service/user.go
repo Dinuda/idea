@@ -13,7 +13,6 @@ import (
 
 //AddUser is used to and a new User
 func AddUser(user models.User) error {
-	log.Println("Adding a new User")
 	hasedPass, err := pkg.GenarateHash(user.Password)
 	user.Password = hasedPass
 	if err != nil {
@@ -51,12 +50,11 @@ func GetUserType(user models.User) (string, error) {
 }
 
 //GetProfessions gets all the Professions roles
-func GetProfessions() ([]models.Profession, error) {
-	log.Println("Getting Professions roles")
+func GetProfessions() (map[int]string, error) {
 	professions, err := repository.GetProfessions()
 	if err != nil || len(professions) < 1 {
 		log.Println("Error retriving professions form the DB, " + err.Error())
-		return []models.Profession{}, err
+		return professions, err
 	}
 	return professions, nil
 }

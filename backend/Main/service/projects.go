@@ -19,9 +19,9 @@ type claims struct {
 var jwtKey = []byte(`gIQhHG6cxsMuyoR92KWvPmzUwd501BjY8fAZltJbE7aSeD4TXiNOCLVpnkrq3F`)
 
 //GetProjectCategories gets all the Categories roles
-func GetProjectCategories() ([]models.ProjectCategory, error) {
+func GetProjectCategories() (map[int]string, error) {
 	projectCategories, err := repository.GetProjectCategories()
-	if err != nil || len(projectCategories) < 1 {
+	if err != nil || projectCategories == nil {
 		log.Println("Error retriving Categories form the DB, " + err.Error())
 		return projectCategories, err
 	}

@@ -23,10 +23,10 @@ type credentials struct {
 }
 
 //Claims of the token
-type claims struct {
-	Username string 
-	jwt.StandardClaims
-}
+// type claims struct {
+// 	Username string 
+// 	jwt.StandardClaims
+// }
 var jwtKey = []byte(`MIICXAIBAAKBgHTSnN3g0neR4kPUiPRA3Qb6T7zbSh31uvRcKsSR5lF5mprnYr6a
 	Q8VwSyj/gimUZk7z4zeNkl5yyJCmzUxeOAs/Xt+sq4yscqwik1EXwTyZGm0e45MW
 	2/h4PEUFELMAUtqy20HpUKXuKzNZsz20bdTS1pgA+hN33Uib68cYQNmXAgMBAAEC
@@ -101,17 +101,10 @@ func auth(w http.ResponseWriter, r *http.Request){
 			return
 		}
 		exp := time.Now().Add(1 *time.Hour)
-		claims := &claims{
-			Username: credentials.Username,
-			StandardClaims: jwt.StandardClaims{
-				// In JWT, the expiry time is expressed as unix milliseconds
-				ExpiresAt: exp.Unix(),
-			},
-		}
-	
-		
-		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	
+		token := jwt.New(jwt.SigningMethodHS256)
+		claims := token.Claims.(jwt.MapClaims)
+		claims["username"] = credentials.Username
+		claims["exp"] = exp
 		tokenString, err := token.SignedString(jwtKey)
 
 		if err != nil {
@@ -133,8 +126,7 @@ func isAuth(next http.Handler) http.Handler {
 			http.Error(w, "No token Provided", http.StatusUnauthorized)
 			return
 		}
-		claims := &claims{}
-		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 			return jwtKey, nil
 		})
 		if err != nil {
@@ -151,12 +143,13 @@ func isAuth(next http.Handler) http.Handler {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		if !token.Valid {
-			http.Error(w, "Token is not valid", http.StatusUnauthorized)
-			return
+		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+			context.Set(r, "username", claims["username"])
+			next.ServeHTTP(w, r)
+			return 
 		}
-		context.Set(r, "username", claims.Username)
-		next.ServeHTTP(w, r)
+		http.Error(w, "Token is not valid or claims not available", http.StatusUnauthorized)
+		
 	})
 }
  
