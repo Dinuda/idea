@@ -28,7 +28,7 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <select class="form-control valid" required="required">
-                                    <option  v-for = " proffesion in professions" :key="proffesion.id">{{ proffesion.name }}</option>
+                                    <option v-for="proffesion in proffesions" :key="proffesion.ID">{{ proffesion.Name }}</option>
                                 </select>
                             </div>
                             <!-- <select>
@@ -82,9 +82,9 @@ export default {
         saveUser() {
             let self = this;
             axios
-                .put("http://localhost:8000/addUser", self.RegistationUser)
+                .put("http://localhost:8000/user", self.RegistationUser)
                 .then(function (response) {
-                    self.$toasted.success(response.data.message);
+                    console.log(response)
                 })
                 .catch(function (e) {
                     console.log(e);
