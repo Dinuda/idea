@@ -64,21 +64,20 @@ func AddStudent(student models.Student) (int64, error) {
 }
 
 //GetProfessions get all the professions from the db
-func GetProfessions() (map[int]string, error) {
-	professions := make(map[int]string)
+func GetProfessions() ([]models.Profession, error) {
+	var professions []models.Profession
 	result, err := selectProfessionsStmt.Query()
 	if err != nil {
 		return professions, err
 	}
 	
 	for result.Next() {
-		var profession string
-		var professionID int
-		err = result.Scan(&professionID, &profession)
+		var profession models.Profession
+		err = result.Scan(&profession.ID, &profession.Name)
 		if err != nil {
 			return professions, err
 		}
-		professions[professionID] = profession
+		professions = append(professions, profession)
 	}
 
 	return professions, err
