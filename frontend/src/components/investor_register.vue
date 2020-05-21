@@ -5,66 +5,64 @@
             <h2 class="contact-title">Register as Investor</h2>
         </div>
         <div class="col-lg-8">
-            <form class="form-contact contact_form" action="contact_process.php" method="post" id="contactForm" novalidate="novalidate">
-                <div class="row">
-                    <div class="col-12">
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <input class="form-control valid" name="username" type="text" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your name'" placeholder="Username" required="required">
+            <div v-if="RegistationUser">
+                <div class="form-contact contact_form">
+                    <div class="row">
+                        <div class="col-12">
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <input class="form-control valid" v-model="RegistationUser.username" name="username" type="text" placeholder="Username" required="required">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <input class="form-control valid" v-model="RegistationUser.firstname" name="firstname" type="text" placeholder="First Name" required="required">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <input class="form-control valid" v-model="RegistationUser.lastname" name="lastname" type="text" placeholder="Last Name" required="required">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <input class="form-control valid" v-model="RegistationUser.email" name="email" type="text" placeholder="E-mail" required="required">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <input class="form-control valid" v-model="RegistationUser.linkdin" type="text" placeholder="Linkdin" required="required">
+                            </div>
                         </div>
                     </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <input class="form-control valid" name="firstname" type="text" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter email address'" placeholder="First Name" required="required">
-                        </div>
-                    </div>
-                     <div class="col-sm-6">
-                        <div class="form-group">
-                            <input class="form-control valid" name="lastname" type="text" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter email address'" placeholder="Last Name" required="required">
-                        </div>
-                    </div> <div class="col-sm-6">
-                        <div class="form-group">
-                            <input class="form-control valid" name="phone" type="number" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter email address'" placeholder="Phone Number" required="required">
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <input class="form-control valid" name="address" type="text" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter email address'" placeholder="Address" required="required">
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <input class="form-control valid" name="email" type="text" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter email address'" placeholder="E-mail" required="required">
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="form-group">
-                            <input class="form-control valid" name="Linkedin" type="text" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter email address'" placeholder="Linkdin Profile name" required="required">
-                        </div>
+                    <div class="form-group mt-3">
+                        <button type="submit" v-on:click="saveUser" class="button button-contactForm boxed-btn">Register</button>
                     </div>
                 </div>
-                <div class="form-group mt-3">
-                    <button type="submit" class="button button-contactForm boxed-btn">Register</button>
-                </div>
-            </form>
+            </div>
         </div>
-
     </div>
 </div>
 </template>
 
 <script>
 export default {
-    name: 'register_investor',
-    components: {
-
+    name: 'register_student',
+    data: function () {
+        return {
+            RegistationUser: {
+                username: null,
+                firstname: null,
+                lastname: null,
+                proffesions: [],
+                linkdin: null,
+                email: null,
+                type: "investor",
+            },
+        };
     },
-    methods: {
-        signup: function () {
-
-        }
-    }
+    components: {},
 }
 </script>
 
@@ -86,6 +84,7 @@ export default {
     padding-bottom: 35px;
     width: 100%;
 }
+
 .header-color[data-v-29e8c3c6] {
     background: #010E21;
 }
@@ -93,9 +92,11 @@ export default {
 .contact-title {
     margin-right: 1004px;
 }
+
 .register[data-v-8f8a1d9a] {
     padding-top: 80px;
 }
+
 .boxed-btn[data-v-8f8a1d9a] {
     margin-left: 593px;
 }

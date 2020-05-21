@@ -26,13 +26,16 @@
                             </div>
                         </div>
                         <div class="col-sm-6">
-                            <div class="form-group" v-if="proffesions">
-                                <v-select v-model="proffesion.Name"  :value="proffesion.Name">
-                                    <option v-for="proffesion in proffesions" :key="proffesion.ID">
-                                        {{ proffesion.Name }}
-                                    </option>
-                                </v-select>
+                            <div class="form-group">
+                                <select class="form-control valid" required="required">
+                                    <option  v-for = " proffesion in professions" :key="proffesion.id">{{ proffesion.name }}</option>
+                                </select>
                             </div>
+                            <!-- <select>
+                                    <option v-for="Proffesion in RegistationUser.proffesions" :key="Proffesion.ID" :value="Proffesion.ID">
+                                        {{ Proffesion.Name }}
+                                    </option>
+                            </select> -->
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
@@ -61,16 +64,15 @@ export default {
     name: 'register_student',
     data: function () {
         return {
-            proffesions: null,
             RegistationUser: {
-                Username: String,
-                Firstname: String,
-                Lastname: String,
-                Proffesion: String,
-                CV: String,
-                Email: String,
-                Type: "student",
-            }
+                username: null,
+                firstname: null,
+                lastname: null,
+                proffesions: [],
+                CV: null,
+                email: null,
+                type: "student",
+            },
         };
     },
     components: {
@@ -92,7 +94,7 @@ export default {
     mounted() {
         let self = this;
         axios
-            .get("http://localhost:8000/getProfessions")
+            .get("http://localhost:8000/professions")
             .then(function (response) {
                 self.proffesions = response.data;
                 console.log(self.proffesions);
