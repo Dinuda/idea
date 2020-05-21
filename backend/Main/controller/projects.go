@@ -1,15 +1,17 @@
 package controller
 
 import (
-	"github.com/gorilla/mux"
-	"github.com/gorilla/context"
-
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"strconv"
+	"time"
+	
+	//"github.com/gorilla/mux"
+	"github.com/gorilla/context"
+	jwt "github.com/dgrijalva/jwt-go"
 
 	"../models"
 	"../service"
@@ -65,17 +67,62 @@ func createProject(w http.ResponseWriter, r *http.Request) {
 
 
 func addStudentToTeam(w http.ResponseWriter, r *http.Request){
-	log.Println("Adding a student to a team")
+	log.Println("Adding a Student to a ProjectStudentTeam")
+	var objmap map[string]json.RawMessage
 	username := context.Get(r, "username").(string)
-	projectID := mux.Vars(r)["projectID"]
-	intProjectID, _ := strconv.Atoi(projectID)
-	err := service.AddStudentToProjectStudentTeam(username, intProjectID)
+	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		log.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Println("Error reading the body /addStudentToTeam " + err.Error())
+		http.Error(w, "Error reading the body /addStudentToTeam" + err.Error(), http.StatusInternalServerError)
+	}
+	err = json.Unmarshal(body, &objmap)
+	if err != nil {
+		log.Println("Error unmarshalling the body /addStudentToTeam " + err.Error())
+		http.Error(w, "Error unmarshalling the body /addStudentToTeam" + err.Error(), http.StatusBadRequest)
+	}
+	var tokenString string
+	err = json.Unmarshal(objmap["token"], &tokenString)
+	if err != nil {
+		log.Println("Error unmarshalling the body /addStudentToTeam " + err.Error())
+		http.Error(w, "Error unmarshalling the body /addStudentToTeam" + err.Error(), http.StatusBadRequest)
+	}
+	if tokenString == ""{
+		log.Println("No token Found")
+		http.Error(w, "No token Provided", http.StatusUnauthorized)
 		return
 	}
-	fmt.Fprintf(w, "Successfully added the student to the team")
+	fmt.Println(tokenString)
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		return jwtKey, nil
+	})
+	if err != nil {
+		log.Println(err)
+		if err == jwt.ErrSignatureInvalid {
+			http.Error(w, err.Error(), http.StatusUnauthorized)
+			return
+		}
+		v, _ := err.(*jwt.ValidationError)
+		if v.Errors == jwt.ValidationErrorExpired {
+			http.Error(w, err.Error(), http.StatusUnauthorized)
+			return
+		}
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		fmt.Println(claims)
+		err := service.AddStudentToProjectStudentTeam(username, claims["ProjectID"].(int))
+		if err != nil {
+			log.Println(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		fmt.Fprintf(w, "Successfully added the student to the team")
+		return
+	}
+
+	http.Error(w, "Token is not valid or claims not available", http.StatusUnauthorized)
+	
 }
 
 func getProjects(w http.ResponseWriter, r *http.Request){
@@ -100,16 +147,26 @@ func genarateInvitationLink(w http.ResponseWriter, r *http.Request){
 	log.Println("Genarating Invitation link")
 	projectID := r.Header.Get("projectID")
 	if projectID == ""{
-		log.Println("Error no username or the projectID given")
-		http.Error(w, "Error no username or the projectID given", http.StatusBadRequest)
+		log.Println("Error projectID given not given")
+		http.Error(w, "Error projectID not given", http.StatusBadRequest)
 		return
 	}
 	intProjectID, _ := strconv.Atoi(projectID)
-	token, err := service.GenarateProjectInvitationCode(intProjectID)
-	if err != nil {
-		log.Println("Error Genarating the code" + err.Error())
-		http.Error(w, "Error Genarating the code" + err.Error(), http.StatusInternalServerError)
-		return
-	}
-	w.Write([]byte(token))
+	exp := time.Now().Add(48 *time.Hour)
+	
+		token := jwt.New(jwt.SigningMethodHS256)
+		claims := token.Claims.(jwt.MapClaims)
+		claims["projectID"] = intProjectID
+		claims["exp"] = exp.Unix()
+	
+		tokenString, err := token.SignedString(jwtKey)
+
+		if err != nil {
+			log.Println("Error creating the token, " + err.Error())
+			http.Error(w, "Error creating the token, " + err.Error(), http.StatusInternalServerError)
+			return
+		}
+		
+	
+	w.Write([]byte(tokenString))
 }

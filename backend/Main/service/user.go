@@ -50,7 +50,7 @@ func GetUserType(user models.User) (string, error) {
 }
 
 //GetProfessions gets all the Professions roles
-func GetProfessions() (map[int]string, error) {
+func GetProfessions() ([]models.Profession, error) {
 	professions, err := repository.GetProfessions()
 	if err != nil || len(professions) < 1 {
 		log.Println("Error retriving professions form the DB, " + err.Error())

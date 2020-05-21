@@ -61,7 +61,8 @@ func StartServer() error {
 	secure.HandleFunc("/user", getUser).Methods("GET")
 	secure.HandleFunc("/project", createProject).Methods("PUT")
 	secure.HandleFunc("/project", getProjects).Methods("GET")
-	secure.HandleFunc("/invitationProjectStudentTeam", genarateInvitationLink).Methods("GET")
+	secure.HandleFunc("/projectStudentTeam", genarateInvitationLink).Methods("GET")
+	secure.HandleFunc("/projectStudentTeam", addStudentToTeam).Methods("PUT")
 
 	return http.ListenAndServe(Addr, handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"*"}))(r))
 }
@@ -145,6 +146,7 @@ func isAuth(next http.Handler) http.Handler {
 		}
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 			context.Set(r, "username", claims["username"])
+			fmt.Println(claims)
 			next.ServeHTTP(w, r)
 			return 
 		}
