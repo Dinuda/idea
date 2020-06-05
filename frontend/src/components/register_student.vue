@@ -17,15 +17,10 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <input class="form-control valid" v-model="RegistationUser.firstname" name="firstname" type="text" placeholder="First Name" required="required">
+                                <input class="form-control valid" v-model="RegistationUser.name" name="firstname" type="text" placeholder="First Name" required="required">
                             </div>
                         </div>
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <input class="form-control valid" v-model="RegistationUser.lastname" name="lastname" type="text" placeholder="Last Name" required="required">
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-6" v-if="RegistationUser.Student">
                             <div class="form-group">
                                 <select class="form-control valid" required="required">
                                     <option v-for="proffesion in proffesions" :key="proffesion.ID">{{ proffesion.Name }}</option>
@@ -39,7 +34,7 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <input class="form-control valid" v-model="RegistationUser.CV" name="url" type="url" placeholder="Url of you CV" required="required">
+                                <input class="form-control valid" v-model="RegistationUser.Student.CV" name="url" type="url" placeholder="Url of you CV" required="required">
                             </div>
                         </div>
                         <div class="col-sm-6">
@@ -68,10 +63,13 @@ export default {
                 username: null,
                 firstname: null,
                 lastname: null,
-                proffesions: [],
                 CV: null,
                 email: null,
-                type: "student",
+                type: "Student",
+                Student: {
+                    proffesions: [],
+                    CV: null
+                }
             },
         };
     },
